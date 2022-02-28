@@ -26,15 +26,17 @@ const LoginPage = () => {
       setErrorMessage('');
       setLoading(true);
 
+      console.log(API_PATHS.signIn);
+
       const json = await dispatch(
         fetchThunk(API_PATHS.signIn, 'post', { email: values.email, password: values.password }),
       );
 
       setLoading(false);
 
-      if (json?.code === RESPONSE_STATUS_SUCCESS) {
-        dispatch(setUserInfo(json.data));
-        Cookies.set(ACCESS_TOKEN_KEY, json.data.token, { expires: values.rememberMe ? 7 : undefined });
+      if (json?.success) {
+        dispatch(setUserInfo(json.user));
+        Cookies.set(ACCESS_TOKEN_KEY, json.user_cookie, { expires: values.rememberMe ? 7 : undefined });
         dispatch(replace(ROUTES.home));
         return;
       }
