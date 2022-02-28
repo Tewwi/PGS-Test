@@ -25,7 +25,7 @@ const NavBar: FC<Props> = ({ children }) => {
   }, [location.pathname]);
 
   if (isHidden) {
-    return <div></div>;
+    return <div>{children}</div>;
   } else {
     return (
       <Box>
