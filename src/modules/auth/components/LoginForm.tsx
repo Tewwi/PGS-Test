@@ -8,7 +8,7 @@ import { ILoginParams } from '../../../models/auth';
 const schema = yup
   .object({
     email: yup.string().required('Please Enter your Email'),
-    password: yup.string().required('Please Enter Your Password').min(5, 'Min 5 characters'),
+    password: yup.string().required('Please Enter Your Password').min(6, 'Min 6 characters'),
   })
   .required();
 
@@ -27,10 +27,13 @@ const LoginForm = (props: Props) => {
     formState: { errors },
   } = useForm<ILoginParams>({ resolver: yupResolver(schema) });
 
-  const onSubmit = React.useCallback((data: ILoginParams) => {
-    console.log(data);
-    return;
-  }, []);
+  const onSubmit = React.useCallback(
+    (data: ILoginParams) => {
+      onLogin(data);
+      return;
+    },
+    [onLogin],
+  );
 
   return (
     <Container component={'main'} maxWidth="xs">
@@ -41,7 +44,6 @@ const LoginForm = (props: Props) => {
               {...field}
               margin="dense"
               fullWidth
-              id="outlined-basic"
               label="Email"
               error={!!errors.email?.message}
               helperText={errors.email?.message}
@@ -61,7 +63,6 @@ const LoginForm = (props: Props) => {
               {...field}
               margin="dense"
               fullWidth
-              id="outlined-basic"
               label="Password"
               error={!!errors.password?.message}
               helperText={errors.password?.message || ''}
