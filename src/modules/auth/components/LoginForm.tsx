@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Checkbox, Container, FormControlLabel, TextField } from '@mui/material';
+import { Box, Button, Checkbox, Container, FormControlLabel, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -20,6 +20,8 @@ interface Props {
 
 const LoginForm = (props: Props) => {
   const { onLogin, loading, errorMessage } = props;
+  console.log(errorMessage);
+
   const {
     control,
     register,
@@ -38,6 +40,22 @@ const LoginForm = (props: Props) => {
   return (
     <Container component={'main'} maxWidth="xs">
       <form onSubmit={handleSubmit(onSubmit)}>
+        {errorMessage && (
+          <Box
+            sx={{
+              width: '100%',
+              height: '38px',
+              backgroundColor: '#f38585',
+              display: 'flex',
+              borderRadius: '3px',
+              marginBottom: '8px',
+            }}
+          >
+            <Typography color={'red'} sx={{ margin: 'auto', width: '90%', fontSize: '15px' }}>
+              {errorMessage}
+            </Typography>
+          </Box>
+        )}
         <Controller
           render={({ field }) => (
             <TextField
