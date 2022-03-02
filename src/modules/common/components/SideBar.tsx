@@ -1,8 +1,8 @@
-import { Collapse, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import LivingOutlinedIcon from '@mui/icons-material/LivingOutlined';
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
-import React from 'react';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import { Collapse, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import React from 'react';
 
 interface Props {
   sideBarOpen: boolean;
@@ -22,8 +22,8 @@ const SideBar = (props: Props) => {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        height: 'calc(100vh - 64px)',
         transition: 'all 0.3s ease-in-out',
+        backgroundColor: '#323259',
         '& .MuiDrawer-paper': {
           backgroundColor: '#323259',
           width: drawerWidth,
@@ -37,7 +37,7 @@ const SideBar = (props: Props) => {
       <List>
         <ListItemButton onClick={() => setCatalogOpen(!catalogOpen)}>
           <ListItemIcon>
-            <LivingOutlinedIcon sx={{ color: 'white' }} />
+            <LocalOfferOutlinedIcon sx={{ color: 'white' }} />
           </ListItemIcon>
           <ListItemText primary="Catalog" />
           {catalogOpen ? <ExpandLess /> : <ExpandMore />}
