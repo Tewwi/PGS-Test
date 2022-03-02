@@ -9,8 +9,6 @@ function getBaseUrl(service: APIService) {
   if (service === APIService.auth) {
     return `${APIHost}/apiAdmin`;
   } else if (service === APIService.public) {
-    console.log(`${APIHost}/api`);
-
     return `${APIHost}/api`;
   }
   return '';
@@ -19,4 +17,6 @@ function getBaseUrl(service: APIService) {
 export const API_PATHS = {
   signIn: `${getBaseUrl(APIService.public)}/authentication/login`,
   //userProfile: `${getBaseUrl(APIService.public)}/user`,
+  getProduct: `${getBaseUrl(APIService.public)}/products/list`,
+  getCategories: `${getBaseUrl(APIService.public)}/categories/list`,
 };
