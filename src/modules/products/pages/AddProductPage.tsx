@@ -85,6 +85,7 @@ const AddProductPage = () => {
     if (json) {
       console.log('success');
       dispatch(replace(ROUTES.productList));
+      return;
     }
 
     return;

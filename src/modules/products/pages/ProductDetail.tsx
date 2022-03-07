@@ -1,7 +1,8 @@
-import { Button, Typography } from '@mui/material';
+import axios from 'axios';
 import dayjs from 'dayjs';
-import { convertFromHTML } from 'draft-convert';
+import { convertFromHTML, convertToHTML } from 'draft-convert';
 import { EditorState } from 'draft-js';
+import Cookies from 'js-cookie';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -9,8 +10,10 @@ import { useParams } from 'react-router';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
 import { API_PATHS } from '../../../configs/api';
+import { ROUTES } from '../../../configs/routes';
 import { IShipping, ProductCreateParam } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
+import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
 import Loading from '../../common/components/Loading';
 import { fetchThunk } from '../../common/redux/thunk';
 import AddProduct from '../components/AddProductPage/AddProduct';
@@ -18,6 +21,8 @@ import Marketing from '../components/AddProductPage/Marketing';
 import Price from '../components/AddProductPage/Price';
 import Shipping from '../components/AddProductPage/Shipping';
 import { fieldData } from './AddProductPage';
+import { Button, Typography } from '@mui/material';
+import { replace } from 'connected-react-router';
 
 const ProductDetail = () => {
   const { id } = useParams() as {
@@ -118,7 +123,28 @@ const ProductDetail = () => {
     [remove],
   );
 
-  const onSubmit = () => {};
+  const onSubmit = useCallback(
+    async (data: ProductCreateParam) => {
+      console.log({ ...data, description: convertToHTML(data.description.getCurrentContent()) });
+      const body = { ...data, description: convertToHTML(data.description.getCurrentContent()) };
+      const config = {
+        headers: {
+          'content-type': 'multipart/form-data',
+          Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
+        },
+      };
+      const json = await axios.put(API_PATHS.createProduct, body, config);
+      console.log(json);
+      if (json) {
+        console.log('success');
+        dispatch(replace(ROUTES.productList));
+        return;
+      }
+
+      return;
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     fetchAllData();
