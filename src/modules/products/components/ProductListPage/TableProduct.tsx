@@ -1,40 +1,37 @@
+import React from 'react';
 import { Table, TableBody, TableContainer } from '@mui/material';
-import React, { useState } from 'react';
-import { Product } from '../../../models/product';
+import { Product } from '../../../../models/product';
+import { Order } from '../../pages/ProductsListPage';
 import TableHeader from './TableHeader';
 import TableItem from './TableItem';
-
-type Order = 'asc' | 'desc';
 
 interface Props {
   tableData: Product[];
   handleCheckAll(check: boolean): void;
   handleCheckBox(id: string): void;
+  handleSort(name: string): void;
+  handleTrashIcon(id: string): void;
+  sortInfo: {
+    order_by: string;
+    sort: Order;
+  };
 }
 
 const TableProduct = (props: Props) => {
-  const { tableData, handleCheckAll, handleCheckBox } = props;
-  const [fieldSort, setFieldSort] = useState('');
-  const [orderSort, setOrderSort] = useState<Order>('asc');
-
-  const handleSort = (name: string) => {
-    const isAsc = fieldSort === name && orderSort === 'asc';
-    setOrderSort(isAsc ? 'desc' : 'asc');
-    setFieldSort(name);
-  };
+  const { tableData, handleCheckAll, handleCheckBox, sortInfo, handleSort, handleTrashIcon } = props;
 
   return (
     <TableContainer sx={{ marginTop: '20px', backgroundColor: '#323259' }}>
       <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
         <TableHeader
-          fieldSort={fieldSort}
-          orderSort={orderSort}
+          order_by={sortInfo.order_by}
+          sort={sortInfo.sort}
           handleSort={handleSort}
           handleCheckAll={handleCheckAll}
         />
         <TableBody>
           {tableData?.map((item) => (
-            <TableItem key={item.id} data={item} onCheckBox={handleCheckBox} />
+            <TableItem key={item.id} data={item} onCheckBox={handleCheckBox} handleTrashIcon={handleTrashIcon} />
           ))}
         </TableBody>
       </Table>

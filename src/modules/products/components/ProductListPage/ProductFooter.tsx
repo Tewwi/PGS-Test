@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Pagination, Select, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, { useMemo } from 'react';
-import { optionItemPerPage } from '../utils';
+import { optionItemPerPage } from '../../utils';
 
 interface Props {
   currPage: number;
@@ -27,7 +27,7 @@ const ProductFooter = (props: Props) => {
   }, [totalItem, itemPerPage]);
 
   return (
-    <div style={{ display: 'flex', width: '70vw', justifyContent: 'space-between' }}>
+    <div style={{ display: 'flex', width: '70vw', justifyContent: 'space-between', paddingBottom: '60px' }}>
       <Pagination
         color="secondary"
         classes={{ ul: classes.ul }}

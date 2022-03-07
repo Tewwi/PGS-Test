@@ -19,11 +19,15 @@
     "@types/react-dom": "^17.0.0",
     "connected-react-router": "^6.9.1",
     "dayjs": "^1.10.8",
+    "draft-convert": "^2.1.12",
+    "draft-js": "^0.11.7",
     "history": "^4.10.1",
     "js-cookie": "^3.0.1",
     "node-sass": "^6.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-draft-wysiwyg": "^1.14.7",
+    "react-dropzone": "^12.0.4",
     "react-hook-form": "^7.27.1",
     "react-intl": "^5.20.10",
     "react-redux": "^7.2.6",
@@ -36,8 +40,7 @@
     "smoothscroll-polyfill": "^0.4.4",
     "typesafe-actions": "^5.1.0",
     "typescript": "^4.1.2",
-    "web-vitals": "^1.0.1",
-    "yup": "^0.32.11"
+    "web-vitals": "^1.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -64,7 +67,9 @@
     ]
   },
   "devDependencies": {
+    "@types/draft-convert": "^2.1.4",
     "@types/js-cookie": "^3.0.1",
+    "@types/react-draft-wysiwyg": "^1.13.4",
     "@types/react-intl": "^3.0.0",
     "@types/react-redux": "^7.1.18",
     "@types/react-router": "^5.1.16",

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import dayjs from 'dayjs';
 
 import { Checkbox, Divider, TableCell, TableRow, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { Product } from '../../../models/product';
+import { Product } from '../../../../models/product';
 import PowerSettingsNewOutlinedIcon from '@mui/icons-material/PowerSettingsNewOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -18,13 +18,17 @@ const useStyles = makeStyles(() => ({
 interface Props {
   data: Product;
   onCheckBox(id: string): void;
+  handleTrashIcon(id: string): void;
 }
 const TableItem = (props: Props) => {
-  const { data, onCheckBox } = props;
+  const { data, onCheckBox, handleTrashIcon } = props;
+  const [isSelect, setIsSelect] = React.useState(false);
+
+  console.log('Table Item');
 
   const classes = useStyles();
   return (
-    <TableRow>
+    <TableRow selected={isSelect}>
       <TableCell padding="checkbox">
         <div style={{ display: 'flex' }}>
           <Checkbox sx={{ color: 'white' }} size="small" checked={data.checked} onChange={() => onCheckBox(data.id)} />
@@ -72,7 +76,8 @@ const TableItem = (props: Props) => {
           <div style={{ margin: 'auto', borderRight: '1px dashed white', marginRight: '8px', minHeight: '30px' }}></div>
           <div
             onClick={() => {
-              onCheckBox(data.id);
+              handleTrashIcon(data.id);
+              setIsSelect(!isSelect);
             }}
             style={{ padding: '2px', backgroundColor: '#e993f9', borderRadius: '5px' }}
           >
@@ -84,4 +89,4 @@ const TableItem = (props: Props) => {
   );
 };
 
-export default TableItem;
+export default memo(TableItem);

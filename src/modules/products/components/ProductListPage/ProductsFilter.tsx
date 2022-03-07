@@ -1,12 +1,3 @@
-import React, { useEffect } from 'react';
-import { Controller, ControllerRenderProps, FieldValues, useForm } from 'react-hook-form';
-import { ProductFilter } from '../../../models/product';
-import { checkBoxValue } from '../utils';
-import { Action } from 'typesafe-actions';
-import { ThunkDispatch } from 'redux-thunk';
-import { AppState } from '../../../redux/reducer';
-import { useDispatch } from 'react-redux';
-
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import {
@@ -24,8 +15,18 @@ import {
   Select,
   Typography,
 } from '@mui/material';
-import { fetchThunk } from '../../common/redux/thunk';
-import { API_PATHS } from '../../../configs/api';
+import React, { useEffect } from 'react';
+import { Controller, ControllerRenderProps, FieldValues, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { Action } from 'typesafe-actions';
+import { API_PATHS } from '../../../../configs/api';
+import { ProductFilter } from '../../../../models/product';
+import { AppState } from '../../../../redux/reducer';
+import { fetchThunk } from '../../../common/redux/thunk';
+import { Vendor } from '../../../../models/product';
+import { checkBoxValue } from '../../utils';
+import { setCatagoryRedux, setVendorRedux } from '../../redux/productRedux';
 
 interface Props {
   handleFilter(data: ProductFilter): void;
@@ -35,8 +36,9 @@ const ProductsFilter = (props: Props) => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const { control, handleSubmit } = useForm();
 
-  const [suggest, setSuggest] = React.useState<string[]>([]);
+  const [category, setCategory] = React.useState<string[]>([]);
   const [moreOption, setMoreOption] = React.useState(false);
+  const [vendor, setVendor] = React.useState<Vendor[]>();
 
   const onSubmit = (data: any) => {
     console.log(data);
@@ -44,20 +46,37 @@ const ProductsFilter = (props: Props) => {
     return;
   };
 
-  const fetchSuggestData = React.useCallback(async () => {
-    if (suggest.length <= 0) {
+  const fetchCategoryData = React.useCallback(async () => {
+    if (category.length <= 0) {
       const resp = await dispatch(fetchThunk(API_PATHS.getCategories, 'get'));
       if (resp.success) {
-        setSuggest(resp.data.map((item: any) => item.name));
+        dispatch(setCatagoryRedux(resp.data));
+        setCategory(resp.data);
       }
       return;
     }
     return;
-  }, [dispatch, suggest.length]);
+  }, [dispatch, category.length]);
+
+  const fetchVendorData = React.useCallback(async () => {
+    if (!vendor) {
+      const resp = await dispatch(fetchThunk(API_PATHS.getVendor, 'get'));
+      if (resp.success) {
+        dispatch(setVendorRedux(resp.data));
+        setVendor(resp.data);
+      }
+      return;
+    }
+    return;
+  }, [dispatch, vendor]);
 
   useEffect(() => {
-    fetchSuggestData();
-  });
+    fetchCategoryData();
+  }, [fetchCategoryData]);
+
+  useEffect(() => {
+    fetchVendorData();
+  }, [fetchVendorData]);
 
   const onChangeCheckBox = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -130,8 +149,13 @@ const ProductsFilter = (props: Props) => {
                   <MenuItem value="0">
                     <em>Any Catagory</em>
                   </MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  {category.map((item: any, index) => {
+                    return (
+                      <MenuItem key={index} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    );
+                  })}
                 </Select>
               )}
               name="category"
@@ -158,11 +182,7 @@ const ProductsFilter = (props: Props) => {
                     height: '100%',
                   }}
                 >
-                  <MenuItem value="all">
-                    <em>Any Stock Status</em>
-                  </MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  <MenuItem value="all">Any Stock Status</MenuItem>
                 </Select>
               )}
               name="stock_status"
@@ -214,7 +234,7 @@ const ProductsFilter = (props: Props) => {
                       )}
                       name="search_type"
                       control={control}
-                      defaultValue=""
+                      defaultValue={['']}
                     />
                   </FormGroup>
                 </div>
@@ -264,43 +284,34 @@ const ProductsFilter = (props: Props) => {
               </Typography>
               <div style={{ backgroundColor: '#1b1b38', width: '100%' }}>
                 <Controller
-                  render={({ field }) => (
-                    <>
-                      <Autocomplete
-                        {...field}
-                        disablePortal
-                        id="combo-box-demo"
-                        options={suggest}
-                        isOptionEqualToValue={(option, value) => option === value}
-                        sx={{
-                          backgroundColor: '#1b1b38',
-                          margin: 'auto',
-                          color: ' white',
-                          width: '100%',
-                          height: '100%',
-                        }}
-                        renderInput={(params) => (
-                          <div ref={params.InputProps.ref}>
-                            <input
-                              type="text"
-                              {...params.inputProps}
-                              style={{
-                                backgroundColor: 'rgb(27, 27, 56)',
-                                margin: 'auto',
-                                color: 'white',
-                                width: '95%',
-                                border: 'none',
-                                outline: 'none',
-                              }}
-                            />
-                          </div>
-                        )}
-                      />
-                    </>
-                  )}
-                  name="vendor"
                   control={control}
-                  defaultValue=""
+                  name="vendor"
+                  render={({ field: { onChange, value } }) => (
+                    <Autocomplete
+                      onChange={(event, item) => {
+                        onChange(item ? item.login : '');
+                      }}
+                      value={value}
+                      options={vendor || []}
+                      getOptionLabel={(item) => (item.name ? item.name : '')}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      renderInput={(params) => (
+                        <div ref={params.InputProps.ref}>
+                          <input
+                            type="text"
+                            {...params.inputProps}
+                            style={{
+                              border: '1px solid transparent',
+                              outline: 'none',
+                              backgroundColor: 'transparent',
+                              color: 'white',
+                              width: '100%',
+                            }}
+                          />
+                        </div>
+                      )}
+                    />
+                  )}
                 />
               </div>
             </Grid>

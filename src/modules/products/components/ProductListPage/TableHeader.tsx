@@ -2,17 +2,17 @@ import React from 'react';
 import { Checkbox, TableCell, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { visuallyHidden } from '@mui/utils';
-import { tableHeaderLabel } from '../utils';
+import { tableHeaderLabel } from '../../utils';
 
 interface Props {
   handleCheckAll(check: boolean): void;
   handleSort(name: string): void;
-  orderSort: 'asc' | 'desc';
-  fieldSort: string;
+  sort: 'asc' | 'desc';
+  order_by: string;
 }
 
 const TableHeader = (props: Props) => {
-  const { handleCheckAll, handleSort, orderSort, fieldSort } = props;
+  const { handleCheckAll, handleSort, sort, order_by } = props;
   return (
     <TableHead>
       <TableRow>
@@ -41,21 +41,21 @@ const TableHeader = (props: Props) => {
               key={item.name}
               align={'left'}
               padding={'normal'}
-              sortDirection={fieldSort === item.name ? orderSort : false}
+              sortDirection={order_by === item.name ? sort : false}
               sx={{ color: 'white' }}
             >
               <TableSortLabel
-                active={fieldSort === item.name}
-                direction={fieldSort === item.name ? orderSort : 'asc'}
+                active={order_by === item.name}
+                direction={order_by === item.name ? sort : 'asc'}
                 onClick={() => handleSort(item.name)}
                 sx={{ color: 'white' }}
               >
                 <Typography sx={{ fontSize: '13px' }} noWrap>
                   {item.name}
                 </Typography>
-                {fieldSort === item.name ? (
+                {order_by === item.name ? (
                   <Box component="span" sx={visuallyHidden}>
-                    {orderSort === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    {sort === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </Box>
                 ) : null}
               </TableSortLabel>
