@@ -4,6 +4,7 @@ import React from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Control, Controller } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import { ProductCreateParam } from '../../../../models/product';
 import { fieldData } from '../../pages/AddProductPage';
 import DropInput from './DropInput';
@@ -12,6 +13,7 @@ export interface AddPageComProps {
   control: Control<ProductCreateParam, any>;
   data?: fieldData;
   error?: any;
+  defaultValue?: ProductCreateParam;
 }
 
 const ITEM_HEIGHT = 48;
@@ -40,7 +42,9 @@ const AddProduct = (props: AddPageComProps) => {
       }}
     >
       <div style={{ marginTop: '10px', marginLeft: '15px' }}>
-        <ArrowCircleLeftIcon fontSize="large" htmlColor="white" />
+        <Link to={'/'}>
+          <ArrowCircleLeftIcon fontSize="large" htmlColor="white" />
+        </Link>
       </div>
 
       <Typography variant="h5" sx={{ color: 'white', marginLeft: '18px', marginTop: '8px' }}>
@@ -56,25 +60,27 @@ const AddProduct = (props: AddPageComProps) => {
             name="vendor_id"
             rules={required}
             render={({ field: { onChange, value } }) => (
-              <Autocomplete
-                onChange={(event, item) => {
-                  onChange(item ? item.id : '');
-                }}
-                value={value}
-                options={data?.vendor || []}
-                getOptionLabel={(item) => (item.name ? item.name : '')}
-                isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                renderInput={(params) => (
-                  <div ref={params.InputProps.ref}>
-                    <input
-                      type="text"
-                      {...params.inputProps}
-                      className="field_input"
-                      placeholder="Type Vendor name to select"
-                    />
-                  </div>
-                )}
-              />
+              <>
+                <Autocomplete
+                  value={value || null}
+                  options={data?.vendor || []}
+                  getOptionLabel={(item) => (item.name ? item.name : '')}
+                  isOptionEqualToValue={(option, value) => +option?.id === +value.id}
+                  onChange={(event, item) => {
+                    onChange(item ? item.id : '');
+                  }}
+                  renderInput={(params) => (
+                    <div ref={params.InputProps.ref}>
+                      <input
+                        type="text"
+                        {...params.inputProps}
+                        className="field_input"
+                        placeholder="Type Vendor name to select"
+                      />
+                    </div>
+                  )}
+                />
+              </>
             )}
           />
           <Typography style={{ color: 'red' }}>{error?.vendor ? error?.vendor?.message : ''}</Typography>
@@ -91,10 +97,9 @@ const AddProduct = (props: AddPageComProps) => {
           <Controller
             control={control}
             rules={required}
-            name="product_title"
-            render={({ field: { value, ...props } }) => (
-              <input value={value || ''} {...props} type="text" className="field_input" />
-            )}
+            name="name"
+            defaultValue={''}
+            render={({ field }) => <input {...field} type="text" className="field_input" />}
           />
           <Typography style={{ color: 'red' }}>{error?.product_title ? error?.product_title?.message : ''}</Typography>
         </div>
@@ -111,6 +116,7 @@ const AddProduct = (props: AddPageComProps) => {
             control={control}
             rules={required}
             name="brand_id"
+            defaultValue={''}
             render={({ field: { value, ...props } }) => (
               <select value={value} {...props} className="field_input">
                 <option value={'0'}></option>
@@ -139,6 +145,7 @@ const AddProduct = (props: AddPageComProps) => {
             control={control}
             rules={required}
             name="condition_id"
+            defaultValue={''}
             render={({ field: { value, ...props } }) => (
               <select value={value} {...props} className="field_input">
                 <option value=""></option>
@@ -200,7 +207,6 @@ const AddProduct = (props: AddPageComProps) => {
                 {...props}
                 multiple
                 value={value ?? ''}
-                defaultValue={[]}
                 input={
                   <OutlinedInput
                     className="field_input"
@@ -235,6 +241,7 @@ const AddProduct = (props: AddPageComProps) => {
             name="description"
             rules={required}
             control={control}
+            defaultValue={''}
             render={({ field: { onChange, value } }) => {
               return (
                 <div style={{ width: '100%' }}>
@@ -268,7 +275,15 @@ const AddProduct = (props: AddPageComProps) => {
           control={control}
           defaultValue={0}
           render={({ field: { onChange, value } }) => {
-            return <Switch value={value} checked={value === 1} onChange={onChange} />;
+            return (
+              <Switch
+                value={value == 1}
+                checked={value == 1}
+                onChange={(e, checked) => {
+                  onChange(checked ? 1 : 0);
+                }}
+              />
+            );
           }}
         />
       </div>

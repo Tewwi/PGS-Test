@@ -58,3 +58,17 @@
 .field_input::-webkit-input-placeholder {
   color: #9494d3;
 }
+
+.link-text {
+  font-size: 13px !important;
+  width: 100%;
+  color: blue;
+}
+
+.link-text a {
+  text-decoration: none !important;
+}
+
+.link-text:hover {
+  text-decoration: underline;
+}

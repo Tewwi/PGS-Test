@@ -53,7 +53,7 @@ export interface IShipping {
 
 export interface ProductCreateParam {
   vendor_id: Vendor;
-  product_title: string;
+  name: string;
   brand_id: string;
   condition_id: string;
   sku?: string;

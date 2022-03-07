@@ -4,4 +4,5 @@ export const ROUTES = {
   login: '/login',
   productList: '/product-list',
   addProduct: '/add-product',
+  productDetail: '/product-detail',
 };

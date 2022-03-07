@@ -6,6 +6,8 @@ import { makeStyles } from '@mui/styles';
 import { Product } from '../../../../models/product';
 import PowerSettingsNewOutlinedIcon from '@mui/icons-material/PowerSettingsNewOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { ROUTES } from '../../../../configs/routes';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
   divider: {
@@ -41,9 +43,9 @@ const TableItem = (props: Props) => {
       <TableCell align="left" padding="normal" sx={{ color: 'white' }}>
         {data.sku}
       </TableCell>
-      <TableCell align="left" style={{ minWidth: 190, maxWidth: 190, color: 'white' }}>
-        <Typography sx={{ fontSize: '13px', width: '100%' }} noWrap>
-          {data.name}
+      <TableCell align="left" style={{ minWidth: 190, maxWidth: 190 }}>
+        <Typography className="link-text" noWrap>
+          <Link to={`${ROUTES.productDetail}/${data.id}`}>{data.name}</Link>
         </Typography>
       </TableCell>
       <TableCell align="left" sx={{ color: 'white' }}>

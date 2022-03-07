@@ -117,7 +117,7 @@ const Marketing = (props: AddPageComProps) => {
           <div style={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
             <Controller
               control={control}
-              name="og_tags"
+              name="meta_description"
               defaultValue={''}
               render={({ field: { value, ...props } }) => (
                 <TextareaAutosize value={value} {...props} aria-label="empty textarea" className="field_input" />
@@ -162,7 +162,15 @@ const Marketing = (props: AddPageComProps) => {
           control={control}
           defaultValue={0}
           render={({ field: { onChange, value } }) => {
-            return <Switch value={value} checked={value === 1} onChange={onChange} />;
+            return (
+              <Switch
+                value={value == 1}
+                checked={value == 1}
+                onChange={(e, checked) => {
+                  onChange(checked ? 1 : 0);
+                }}
+              />
+            );
           }}
         />
       </div>
@@ -175,7 +183,15 @@ const Marketing = (props: AddPageComProps) => {
           control={control}
           defaultValue={0}
           render={({ field: { onChange, value } }) => {
-            return <Switch value={value} checked={value === 1} onChange={onChange} />;
+            return (
+              <Switch
+                value={value == 1}
+                checked={value == 1}
+                onChange={(e, checked) => {
+                  onChange(checked ? 1 : 0);
+                }}
+              />
+            );
           }}
         />
       </div>

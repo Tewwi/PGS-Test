@@ -1,94 +1,43 @@
 import { Button, Typography } from '@mui/material';
-import axios from 'axios';
-import { replace } from 'connected-react-router';
-import { convertToHTML } from 'draft-convert';
-import Cookies from 'js-cookie';
+import dayjs from 'dayjs';
+import { convertFromHTML } from 'draft-convert';
+import { EditorState } from 'draft-js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { Action } from 'redux';
+import { useParams } from 'react-router';
 import { ThunkDispatch } from 'redux-thunk';
+import { Action } from 'typesafe-actions';
 import { API_PATHS } from '../../../configs/api';
-import { ROUTES } from '../../../configs/routes';
-import { Brand, Catagory, Condition, IShipping, ProductCreateParam, Vendor } from '../../../models/product';
+import { IShipping, ProductCreateParam } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
-import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
 import Loading from '../../common/components/Loading';
 import { fetchThunk } from '../../common/redux/thunk';
 import AddProduct from '../components/AddProductPage/AddProduct';
 import Marketing from '../components/AddProductPage/Marketing';
 import Price from '../components/AddProductPage/Price';
 import Shipping from '../components/AddProductPage/Shipping';
+import { fieldData } from './AddProductPage';
 
-export interface fieldData {
-  vendor?: Vendor[];
-  catagory?: Catagory[];
-  brand?: Brand[];
-  condition?: Condition[];
-  shipping?: IShipping[];
-}
+const ProductDetail = () => {
+  const { id } = useParams() as {
+    id: string;
+  };
 
-export interface errorMessage {
-  message: string;
-}
-
-const AddProductPage = () => {
+  const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
+  const [dataDetail, setDataDetail] = useState<ProductCreateParam>();
+  const [dataField, setDataField] = useState<fieldData>();
+  const [loading, setLoading] = useState(false);
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors, isValid },
   } = useForm<ProductCreateParam>({
     mode: 'onChange',
-    defaultValues: {
-      shipping_to_zones: [
-        {
-          id: '1',
-          zone_name: 'Continental U.S.',
-          price: '0.00',
-        },
-      ],
-    },
+    defaultValues: dataDetail,
   });
-
   const { fields, append, remove } = useFieldArray({ name: 'shipping_to_zones', control });
-  const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<fieldData>();
-
-  const handleAddShipping = useCallback(
-    (obj: IShipping) => {
-      append(obj);
-      return;
-    },
-    [append],
-  );
-
-  const handleRemoveShipping = useCallback(
-    (index: number) => {
-      remove(index);
-      return;
-    },
-    [remove],
-  );
-
-  const onSubmit = async (data: ProductCreateParam) => {
-    console.log({ ...data, description: convertToHTML(data.description.getCurrentContent()) });
-    const body = { ...data, description: convertToHTML(data.description.getCurrentContent()) };
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data',
-        Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
-      },
-    };
-    const json = await axios.put(API_PATHS.createProduct, body, config);
-    console.log(json);
-    if (json) {
-      console.log('success');
-      dispatch(replace(ROUTES.productList));
-    }
-
-    return;
-  };
 
   const fetchAllData = useCallback(async () => {
     setLoading(true);
@@ -124,12 +73,68 @@ const AddProductPage = () => {
       return result;
     }, {} as any);
 
-    setData(data);
+    setDataField(data);
   }, [dispatch]);
+
+  const fetchDataDetail = useCallback(async () => {
+    setLoading(true);
+
+    const resp = await dispatch(fetchThunk(API_PATHS.getProductDetail, 'post', { id: id }));
+
+    setLoading(false);
+
+    console.log(resp);
+
+    if (resp && resp.success && dataField) {
+      const contentState = EditorState.createEmpty();
+      const description = EditorState.push(
+        contentState,
+        convertFromHTML(resp.data.description) as any,
+        'change-block-data',
+      );
+      const vendor = dataField.vendor?.filter((item) => item.id == resp.data.vendor_id)[0];
+      const time = dayjs(resp.data.arrival_date * 1000).format('YYYY-MM-DD');
+      setDataDetail({ ...resp.data, description: description, vendor_id: vendor, arrival_date: time });
+      return;
+    }
+
+    console.log('error');
+    return;
+  }, [dispatch, id, dataField]);
+
+  const handleAddShipping = useCallback(
+    (obj: IShipping) => {
+      append(obj);
+      return;
+    },
+    [append],
+  );
+
+  const handleRemoveShipping = useCallback(
+    (index: number) => {
+      remove(index);
+      return;
+    },
+    [remove],
+  );
+
+  const onSubmit = () => {};
 
   useEffect(() => {
     fetchAllData();
   }, [fetchAllData]);
+
+  useEffect(() => {
+    if (dataField) {
+      fetchDataDetail();
+    }
+  }, [fetchDataDetail, dataField]);
+
+  useEffect(() => {
+    if (dataDetail) {
+      reset(dataDetail);
+    }
+  }, [dataDetail, reset]);
 
   if (loading) {
     return <Loading />;
@@ -146,15 +151,15 @@ const AddProductPage = () => {
     >
       <div style={{ padding: '16px', width: '100%' }}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
-          <AddProduct data={data} control={control} error={errors} />
-          <Price data={data} control={control} error={errors} />
+          <AddProduct data={dataField} control={control} error={errors} />
+          <Price data={dataField} control={control} error={errors} />
           <Shipping
-            rest={{ control: control, data: data, error: errors }}
+            rest={{ control: control, data: dataField, error: errors }}
             fields={fields}
             handleAddShipping={handleAddShipping}
             handleRemoveShipping={handleRemoveShipping}
           />
-          <Marketing data={data} control={control} error={errors} />
+          <Marketing data={dataField} control={control} error={errors} />
           <div
             style={{
               display: 'flex',
@@ -189,7 +194,7 @@ const AddProductPage = () => {
               }}
             >
               <Typography sx={{ fontSize: '13px' }} noWrap>
-                Add Product
+                Upadte Product
               </Typography>
             </Button>
           </div>
@@ -199,4 +204,4 @@ const AddProductPage = () => {
   );
 };
 
-export default AddProductPage;
+export default ProductDetail;
