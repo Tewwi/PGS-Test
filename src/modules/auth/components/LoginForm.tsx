@@ -1,16 +1,7 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Checkbox, Container, FormControlLabel, TextField, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { ILoginParams } from '../../../models/auth';
-
-const schema = yup
-  .object({
-    email: yup.string().required('Please Enter your Email'),
-    password: yup.string().required('Please Enter Your Password').min(6, 'Min 6 characters'),
-  })
-  .required();
 
 interface Props {
   onLogin(values: ILoginParams): void;
@@ -24,10 +15,9 @@ const LoginForm = (props: Props) => {
 
   const {
     control,
-    register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ILoginParams>({ resolver: yupResolver(schema) });
+  } = useForm<ILoginParams>();
 
   const onSubmit = React.useCallback(
     (data: ILoginParams) => {
@@ -36,6 +26,10 @@ const LoginForm = (props: Props) => {
     },
     [onLogin],
   );
+
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
 
   return (
     <Container component={'main'} maxWidth="xs">
@@ -70,8 +64,8 @@ const LoginForm = (props: Props) => {
               className="materialUIInput"
             />
           )}
-          {...register('email', { required: true })}
           name="email"
+          rules={{ required: { value: true, message: 'This field is requierd' } }}
           control={control}
           defaultValue=""
         />
@@ -89,7 +83,10 @@ const LoginForm = (props: Props) => {
               className="materialUIInput"
             />
           )}
-          rules={{ required: true }}
+          rules={{
+            required: { value: true, message: 'This field requierd' },
+            minLength: { value: 6, message: 'Min 6 characters' },
+          }}
           name="password"
           control={control}
           defaultValue=""

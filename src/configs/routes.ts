@@ -2,5 +2,6 @@ export const ROUTES = {
   home: '/home',
   contact: '/contact',
   login: '/login',
-  productList: 'product-list',
+  productList: '/product-list',
+  addProduct: '/add-product',
 };
