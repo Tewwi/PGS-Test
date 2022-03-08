@@ -14,6 +14,7 @@ interface Props {
 const Shipping = (props: Props) => {
   const { control, data, error } = props.rest;
   const [shippingLocationIndex, setShippingLocationIndex] = React.useState<number>(0);
+  console.log(props.fields);
 
   return (
     <div
@@ -51,7 +52,7 @@ const Shipping = (props: Props) => {
                   rules={{ required: { value: index === 0, message: 'This field is requierd' } }}
                   defaultValue={item.price}
                   render={({ field: { value, ...props } }) => (
-                    <input value={value || ''} {...props} type="number" className="field_input" />
+                    <input value={Number(value).toFixed(2) || ''} {...props} type="number" className="field_input" />
                   )}
                 />
                 <Controller

@@ -6,10 +6,11 @@ import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
 import { API_PATHS } from '../../../configs/api';
 import { ROUTES } from '../../../configs/routes';
-import { Product, ProductFilter } from '../../../models/product';
+import { Product, ProductFilter, ProductItem } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
 import { fetchThunk } from '../../common/redux/thunk';
-import ProductFooter from '../components/ProductListPage/ProductFooter';
+import ProductPageFooter from '../components/ProductListPage/ProductPageFooter';
+import ProductPagination from '../components/ProductListPage/ProductPagination';
 import ProductsFilter from '../components/ProductListPage/ProductsFilter';
 import TableProduct from '../components/ProductListPage/TableProduct';
 import TableSkeleton from '../components/ProductListPage/TableSkeleton';
@@ -21,7 +22,7 @@ interface sortInfo {
   sort: Order;
 }
 
-let count = 1;
+let count = 0;
 
 const ProductsListPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
@@ -38,17 +39,29 @@ const ProductsListPage = () => {
     page: 1,
     itemPerPage: 25,
   });
-  console.log(count++);
   const [loading, setLoading] = useState(false);
   const [sortInfo, setSortInfo] = useState<sortInfo>({
     order_by: 'name',
     sort: 'asc',
   });
   const [totalItem, setTotalItem] = useState(1000);
+  const [itemChange, setItemChange] = useState<ProductItem[]>([]);
+  const [deleItem, setDeleItem] = useState<object[]>([]);
+  const [btnInfo, setBtnInfo] = useState({
+    disable: true,
+    isDele: false,
+    text: 'Save Change',
+  });
+  console.log(count++);
 
   const handleFilter = useCallback((data: ProductFilter) => {
     setFilterValue(data);
   }, []);
+
+  const handleSort = (name: string) => {
+    const isAsc = sortInfo.order_by === name && sortInfo.sort === 'desc';
+    setSortInfo({ sort: isAsc ? 'asc' : 'desc', order_by: name });
+  };
 
   const fetchProductData = useCallback(async () => {
     setLoading(true);
@@ -127,14 +140,99 @@ const ProductsListPage = () => {
     });
   }, []);
 
-  const handleSort = (name: string) => {
-    const isAsc = sortInfo.order_by === name && sortInfo.sort === 'asc';
-    setSortInfo({ sort: isAsc ? 'desc' : 'asc', order_by: name });
-  };
+  const handleClickPowerBtn = useCallback(
+    async (id: string, enabled: boolean) => {
+      setLoading(true);
+      const isEnabled = enabled ? 1 : 0;
+      const resp = await dispatch(
+        fetchThunk(API_PATHS.updateItemTable, 'post', {
+          params: [{ id: id, enable: isEnabled }],
+        }),
+      );
+      setLoading(false);
+      if (resp.success) {
+        console.log(resp);
+        setTableData((prev) => {
+          if (prev) {
+            const index = prev?.findIndex((item) => item.id == id);
+            const newData = [...prev];
+            newData[index] = { ...newData[index], enabled: isEnabled.toString() };
+            return newData;
+          }
+        });
+      }
+
+      return;
+    },
+    [dispatch],
+  );
+
+  const handleChangeValueItem = useCallback(
+    (data: ProductItem, index: number) => {
+      if (tableData) {
+        const newData = [...tableData];
+        const cloneItem = { ...newData[index], price: data.price, amount: data.amount };
+        newData[index] = cloneItem;
+        setItemChange((prev) => [...prev, data]);
+        setTableData(newData);
+        return;
+      }
+      return;
+    },
+    [tableData],
+  );
+
+  const handleSaveBtn = useCallback(async () => {
+    console.log('aaa');
+    setLoading(true);
+    const resp = await dispatch(
+      fetchThunk(API_PATHS.updateItemTable, 'post', {
+        params: itemChange,
+      }),
+    );
+    setLoading(false);
+    console.log(resp);
+    return;
+  }, [dispatch, itemChange]);
+
+  const handleRemovebtn = useCallback(async () => {
+    setLoading(true);
+    const resp = await dispatch(
+      fetchThunk(API_PATHS.updateItemTable, 'post', {
+        params: deleItem,
+      }),
+    );
+    setLoading(false);
+    console.log(resp);
+    return;
+  }, [dispatch, deleItem]);
 
   useEffect(() => {
     fetchProductData();
   }, [fetchProductData]);
+
+  useEffect(() => {
+    if (!tableData) return;
+    const temp: object[] = [];
+    tableData?.forEach((item) => {
+      if (item.isDele) {
+        temp.push({ id: item.id, delete: 1 });
+      }
+    });
+    if (temp && temp.length > 0) {
+      setDeleItem(temp);
+    } else setDeleItem([]);
+  }, [tableData]);
+
+  useEffect(() => {
+    if (deleItem.length > 0) {
+      setBtnInfo({ disable: false, text: 'Remove selected', isDele: true });
+    } else if (itemChange.length > 0) {
+      setBtnInfo({ disable: false, text: 'Save Change', isDele: false });
+    } else {
+      setBtnInfo({ disable: true, text: 'Save Change', isDele: false });
+    }
+  }, [itemChange, deleItem]);
 
   return (
     <>
@@ -169,12 +267,14 @@ const ProductsListPage = () => {
                 handleCheckBox={handleCheckBox}
                 handleCheckAll={handleCheckAll}
                 handleTrashIcon={handleTrashIcon}
+                handleChangeValueItem={handleChangeValueItem}
+                handleClickPowerBtn={handleClickPowerBtn}
               />
             ) : (
               <TableSkeleton />
             )}
           </Container>
-          <ProductFooter
+          <ProductPagination
             currPage={pageInfo.page}
             itemPerPage={pageInfo.itemPerPage}
             totalItem={totalItem}
@@ -182,62 +282,7 @@ const ProductsListPage = () => {
             handleChangItemPerPage={handleChangItemPerPage}
           />
         </div>
-        <div
-          style={{
-            display: 'flex',
-            position: 'fixed',
-            width: '60vw',
-            height: '50px',
-            backgroundColor: '#323259',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            margin: '0 auto',
-            boxShadow: '1px 1px 10px 10px #b18aff',
-            borderRadius: '3px',
-            zIndex: '10000',
-          }}
-        >
-          <Button
-            variant="contained"
-            disabled
-            style={{ maxWidth: '120px', maxHeight: '35px', minWidth: '120px', minHeight: '35px' }}
-            sx={{
-              padding: '10px',
-              backgroundColor: '#efa945',
-              '&: hover': {
-                backgroundColor: '#efa945',
-                color: 'black',
-              },
-              alignSelf: 'center',
-              marginLeft: '20px',
-              textTransform: 'none',
-            }}
-          >
-            <Typography sx={{ fontSize: '13px' }} noWrap>
-              Save Changes
-            </Typography>
-          </Button>
-          <Button
-            variant="contained"
-            style={{ maxWidth: '120px', maxHeight: '35px', minWidth: '120px', minHeight: '35px' }}
-            sx={{
-              padding: '10px',
-              backgroundColor: '#efa945',
-              '&: hover': {
-                backgroundColor: '#efa945',
-                color: 'black',
-              },
-              alignSelf: 'center',
-              marginLeft: '20px',
-              textTransform: 'none',
-            }}
-          >
-            <Typography sx={{ fontSize: '13px' }} noWrap>
-              Export All:CSV
-            </Typography>
-          </Button>
-        </div>
+        <ProductPageFooter btnInfo={btnInfo} handleSaveBtn={handleSaveBtn} handleRemovebtn={handleRemovebtn} />
       </div>
     </>
   );

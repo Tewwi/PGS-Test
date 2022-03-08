@@ -11,6 +11,8 @@ interface Props {
   handleCheckBox(id: string): void;
   handleSort(name: string): void;
   handleTrashIcon(id: string): void;
+  handleChangeValueItem(data: { price: string; amount: string; id: string }, index: number): void;
+  handleClickPowerBtn(id: string, enabled: boolean): void;
   sortInfo: {
     order_by: string;
     sort: Order;
@@ -18,7 +20,16 @@ interface Props {
 }
 
 const TableProduct = (props: Props) => {
-  const { tableData, handleCheckAll, handleCheckBox, sortInfo, handleSort, handleTrashIcon } = props;
+  const {
+    tableData,
+    handleCheckAll,
+    handleCheckBox,
+    sortInfo,
+    handleSort,
+    handleTrashIcon,
+    handleChangeValueItem,
+    handleClickPowerBtn,
+  } = props;
 
   return (
     <TableContainer sx={{ marginTop: '20px', backgroundColor: '#323259' }}>
@@ -30,8 +41,16 @@ const TableProduct = (props: Props) => {
           handleCheckAll={handleCheckAll}
         />
         <TableBody>
-          {tableData?.map((item) => (
-            <TableItem key={item.id} data={item} onCheckBox={handleCheckBox} handleTrashIcon={handleTrashIcon} />
+          {tableData?.map((item, index) => (
+            <TableItem
+              key={item.id}
+              index={index}
+              data={item}
+              onCheckBox={handleCheckBox}
+              handleTrashIcon={handleTrashIcon}
+              handleChangeValueItem={handleChangeValueItem}
+              handleClickPowerBtn={handleClickPowerBtn}
+            />
           ))}
         </TableBody>
       </Table>

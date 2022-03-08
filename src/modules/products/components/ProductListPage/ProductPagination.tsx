@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ProductFooter = (props: Props) => {
+const ProductPagination = (props: Props) => {
   const { currPage, itemPerPage, totalItem, handleChangePage, handleChangItemPerPage } = props;
   const classes = useStyles();
   const lastPage = useMemo(() => {
@@ -67,4 +67,4 @@ const ProductFooter = (props: Props) => {
   );
 };
 
-export default ProductFooter;
+export default ProductPagination;

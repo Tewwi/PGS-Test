@@ -99,7 +99,13 @@ const ProductDetail = () => {
       );
       const vendor = dataField.vendor?.filter((item) => item.id == resp.data.vendor_id)[0];
       const time = dayjs(resp.data.arrival_date * 1000).format('YYYY-MM-DD');
-      setDataDetail({ ...resp.data, description: description, vendor_id: vendor, arrival_date: time });
+      setDataDetail({
+        ...resp.data,
+        description: description,
+        vendor_id: vendor,
+        arrival_date: time,
+        shipping_to_zones: resp.data.shipping,
+      });
       return;
     }
 

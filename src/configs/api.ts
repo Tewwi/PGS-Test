@@ -24,4 +24,5 @@ export const API_PATHS = {
   getConditions: `${getBaseUrl(APIService.auth)}/conditions/list`,
   getShipping: `${getBaseUrl(APIService.auth)}/shipping/list`,
   createProduct: `${getBaseUrl(APIService.auth)}/products/create`,
+  updateItemTable: `${getBaseUrl(APIService.auth)}/products/edit`,
 };

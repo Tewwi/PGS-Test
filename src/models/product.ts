@@ -16,8 +16,15 @@ export interface Product {
   category: string;
   vendor: string;
   amount: string;
+  enabled?: string;
   checked?: boolean;
   isDele?: boolean;
+}
+
+export interface ProductItem {
+  id: string;
+  price: string;
+  amount: string;
 }
 
 export interface Vendor {
