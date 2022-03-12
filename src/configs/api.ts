@@ -25,4 +25,10 @@ export const API_PATHS = {
   getShipping: `${getBaseUrl(APIService.auth)}/shipping/list`,
   createProduct: `${getBaseUrl(APIService.auth)}/products/create`,
   updateItemTable: `${getBaseUrl(APIService.auth)}/products/edit`,
+  getRole: `${getBaseUrl(APIService.auth)}/commons/role`,
+  getCountry: `${getBaseUrl(APIService.auth)}/commons/country`,
+  getState: `${getBaseUrl(APIService.auth)}/commons/state`,
+  getUserList: `${getBaseUrl(APIService.auth)}/users/list`,
+  editUser: `${getBaseUrl(APIService.auth)}/users/edit`,
+  createUser: `${getBaseUrl(APIService.auth)}/users/create`,
 };
