@@ -1,23 +1,12 @@
 import { Checkbox, FormControlLabel, FormGroup, MenuItem, OutlinedInput, Select, Typography } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { memberships, sale_unit } from '../../utils';
+import { memberships, MenuProps, sale_unit } from '../../utils';
 import { AddPageComProps } from './AddProduct';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_BOTTOM = -30;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_BOTTOM,
-      width: 250,
-    },
-  },
-};
-
 const Price = (props: AddPageComProps) => {
-  const { control, error, defaultValue } = props;
+  const { control, error } = props;
   const required = { required: { value: true, message: 'This field is requierd' } };
   const [isSale, setIsSale] = React.useState(false);
 
@@ -46,7 +35,7 @@ const Price = (props: AddPageComProps) => {
           <Controller
             control={control}
             name="memberships"
-            defaultValue={defaultValue?.memberships || []}
+            defaultValue={[]}
             render={({ field: { value, ...props } }) => (
               <Select
                 {...props}
@@ -87,12 +76,23 @@ const Price = (props: AddPageComProps) => {
             <Controller
               control={control}
               name="tax_exempt"
-              defaultValue={defaultValue?.tax_exempt || 0}
-              render={({ field: { value, ...props } }) => (
+              defaultValue={0}
+              render={({ field: { value, onChange, ...props } }) => (
                 <FormGroup>
                   <FormControlLabel
                     style={{ color: 'white' }}
-                    control={<Checkbox style={{ color: 'white' }} value={value} checked={value === 1} {...props} />}
+                    control={
+                      <Checkbox
+                        style={{ color: 'white' }}
+                        value={value}
+                        onChange={(e, checked) => {
+                          if (checked) onChange(1);
+                          else onChange(0);
+                        }}
+                        checked={value === 1}
+                        {...props}
+                      />
+                    }
                     label="Tax Exempt"
                   />
                 </FormGroup>
@@ -118,7 +118,7 @@ const Price = (props: AddPageComProps) => {
                 control={control}
                 name="price"
                 rules={required}
-                defaultValue={defaultValue?.price || ''}
+                defaultValue={''}
                 render={({ field: { value, ...props } }) => (
                   <input value={value} {...props} type="number" className="field_input" />
                 )}
@@ -145,7 +145,7 @@ const Price = (props: AddPageComProps) => {
                   <Controller
                     control={control}
                     name="sale_price_type"
-                    defaultValue={defaultValue?.sale_price_type || ''}
+                    defaultValue={''}
                     render={({ field: { value, ...props } }) => (
                       <select
                         value={value || ''}
@@ -166,7 +166,7 @@ const Price = (props: AddPageComProps) => {
                   <Controller
                     control={control}
                     name="sale_price"
-                    defaultValue={defaultValue?.sale_price || ''}
+                    defaultValue={''}
                     render={({ field: { value, ...props } }) => (
                       <input value={value} {...props} type="number" className="field_input" />
                     )}
@@ -193,7 +193,7 @@ const Price = (props: AddPageComProps) => {
             <Controller
               control={control}
               name="arrival_date"
-              defaultValue={defaultValue?.arrival_date || ''}
+              defaultValue={''}
               render={({ field: { value, ...props } }) => (
                 <input value={value} {...props} type="date" className="field_input" />
               )}
@@ -213,7 +213,7 @@ const Price = (props: AddPageComProps) => {
             control={control}
             name="quantity"
             rules={required}
-            defaultValue={defaultValue?.quantity || ''}
+            defaultValue={''}
             render={({ field: { value, ...props } }) => (
               <input value={value} {...props} type="number" className="field_input" />
             )}

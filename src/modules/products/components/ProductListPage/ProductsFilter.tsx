@@ -26,7 +26,6 @@ import { AppState } from '../../../../redux/reducer';
 import { fetchThunk } from '../../../common/redux/thunk';
 import { Vendor } from '../../../../models/product';
 import { checkBoxValue } from '../../utils';
-import { setCatagoryRedux, setVendorRedux } from '../../redux/productRedux';
 
 interface Props {
   handleFilter(data: ProductFilter): void;
@@ -50,7 +49,6 @@ const ProductsFilter = (props: Props) => {
     if (category.length <= 0) {
       const resp = await dispatch(fetchThunk(API_PATHS.getCategories, 'get'));
       if (resp.success) {
-        dispatch(setCatagoryRedux(resp.data));
         setCategory(resp.data);
       }
       return;
@@ -62,7 +60,6 @@ const ProductsFilter = (props: Props) => {
     if (!vendor) {
       const resp = await dispatch(fetchThunk(API_PATHS.getVendor, 'get'));
       if (resp.success) {
-        dispatch(setVendorRedux(resp.data));
         setVendor(resp.data);
       }
       return;

@@ -7,6 +7,7 @@ import { Control, Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { ProductCreateParam } from '../../../../models/product';
 import { fieldData } from '../../pages/AddProductPage';
+import { MenuProps } from '../../utils';
 import DropInput from './DropInput';
 
 export interface AddPageComProps {
@@ -15,17 +16,6 @@ export interface AddPageComProps {
   error?: any;
   defaultValue?: ProductCreateParam;
 }
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_BOTTOM = -30;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_BOTTOM,
-      width: 250,
-    },
-  },
-};
 
 const AddProduct = (props: AddPageComProps) => {
   const { control, data, error } = props;

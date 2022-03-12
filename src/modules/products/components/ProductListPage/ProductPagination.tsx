@@ -40,27 +40,22 @@ const ProductPagination = (props: Props) => {
       />
       <div style={{ color: 'white', margin: 'auto', display: 'flex' }}>
         <Typography sx={{ margin: 'auto' }}>{totalItem} items</Typography>
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-helper-label" color="secondary">
-            Item Per Page
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-helper-label"
-            id="demo-simple-select-helper"
+        <FormControl sx={{ m: 1, minWidth: 150, display: 'flex', flexDirection: 'row' }}>
+          <select
+            style={{ width: '50%' }}
             value={itemPerPage}
-            label="itemPerPage"
-            color="secondary"
-            sx={{ height: '80%' }}
             onChange={(e) => handleChangItemPerPage(+e.target.value)}
+            className="field_input"
           >
-            {optionItemPerPage.map((item) => {
+            {optionItemPerPage?.map((item, index) => {
               return (
-                <MenuItem key={item} value={item}>
+                <option key={index} value={item}>
                   {item}
-                </MenuItem>
+                </option>
               );
             })}
-          </Select>
+          </select>
+          <Typography sx={{ margin: 'auto' }}>per page</Typography>
         </FormControl>
       </div>
     </div>

@@ -183,7 +183,6 @@ const ProductsListPage = () => {
   );
 
   const handleSaveBtn = useCallback(async () => {
-    console.log('aaa');
     setLoading(true);
     const resp = await dispatch(
       fetchThunk(API_PATHS.updateItemTable, 'post', {

@@ -6,9 +6,9 @@ interface TabelHeader {
   canSort: boolean;
 }
 
-interface Memberships {
+export interface Memberships {
   label: string;
-  value: number | null;
+  value: number | string | null;
 }
 
 interface OG_tag {
@@ -76,3 +76,14 @@ export const metaDesc: OG_tag[] = [
     label: 'Custom',
   },
 ];
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_BOTTOM = -30;
+export const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_BOTTOM,
+      width: 250,
+    },
+  },
+};

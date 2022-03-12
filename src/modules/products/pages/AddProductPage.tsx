@@ -28,10 +28,6 @@ export interface fieldData {
   shipping?: IShipping[];
 }
 
-export interface errorMessage {
-  message: string;
-}
-
 const AddProductPage = () => {
   const {
     control,
@@ -169,7 +165,7 @@ const AddProductPage = () => {
               margin: '0 auto',
               boxShadow: '1px 1px 10px 10px #b18aff',
               borderRadius: '3px',
-              zIndex: '10000',
+              zIndex: '1',
             }}
           >
             <Button

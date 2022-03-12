@@ -14,7 +14,6 @@ interface Props {
 const ProductPageFooter = (props: Props) => {
   const { btnInfo, handleSaveBtn, handleRemovebtn } = props;
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  console.log(btnInfo.isDele);
   return (
     <div
       style={{
