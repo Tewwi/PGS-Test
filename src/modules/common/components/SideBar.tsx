@@ -3,6 +3,8 @@ import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import { Collapse, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../../configs/routes';
 
 interface Props {
   sideBarOpen: boolean;
@@ -45,7 +47,9 @@ const SideBar = (props: Props) => {
         <Collapse in={catalogOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton sx={{ pl: 4 }}>
-              <ListItemText primary="Products" />
+              <Link to={ROUTES.productList} style={{ textDecoration: 'none', color: 'white' }}>
+                <ListItemText primary="Products" />
+              </Link>
             </ListItemButton>
           </List>
         </Collapse>
@@ -59,7 +63,9 @@ const SideBar = (props: Props) => {
         <Collapse in={userOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton sx={{ pl: 4 }}>
-              <ListItemText sx={{ fontSize: '13px' }} primary="User List" />
+              <Link to={ROUTES.userList} style={{ textDecoration: 'none', color: 'white' }}>
+                <ListItemText sx={{ fontSize: '13px' }} primary="User List" />
+              </Link>
             </ListItemButton>
           </List>
         </Collapse>
