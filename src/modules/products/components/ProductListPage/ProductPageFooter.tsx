@@ -1,5 +1,10 @@
-import { Button, Typography, Modal, Box } from '@mui/material';
 import React from 'react';
+import { Button, Typography, Modal, Box } from '@mui/material';
+import { tableHeaderLabel } from '../../utils';
+import { Product } from '../../../../models/product';
+import { CSVLink } from 'react-csv';
+import { Data } from 'react-csv/components/CommonPropTypes';
+import dayjs from 'dayjs';
 
 interface Props {
   btnInfo: {
@@ -9,11 +14,32 @@ interface Props {
   };
   handleSaveBtn(): void;
   handleRemovebtn(): void;
+  data?: Product[];
 }
 
+const headerCSV = tableHeaderLabel.map((item) => {
+  return { label: item.name, key: item.name.toLowerCase() };
+});
+
 const ProductPageFooter = (props: Props) => {
-  const { btnInfo, handleSaveBtn, handleRemovebtn } = props;
+  const { btnInfo, handleSaveBtn, handleRemovebtn, data } = props;
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [dataExport, setDataExport] = React.useState<any>([]);
+
+  React.useEffect(() => {
+    if (data) {
+      setDataExport(
+        data?.map((item) => {
+          return {
+            ...item,
+            'in stock': item.amount,
+            'arrival date': dayjs(+item.arrivalDate * 1000).format('DD/MM/YYYY'),
+          };
+        }),
+      );
+    }
+  }, [data]);
+
   return (
     <div
       style={{
@@ -67,9 +93,18 @@ const ProductPageFooter = (props: Props) => {
           textTransform: 'none',
         }}
       >
-        <Typography sx={{ fontSize: '13px' }} noWrap>
-          Export All:CSV
-        </Typography>
+        {dataExport.length > 0 ? (
+          <CSVLink
+            style={{ textDecoration: 'none', color: 'white' }}
+            data={dataExport as Data}
+            headers={headerCSV}
+            filename="ProductTable"
+          >
+            <Typography sx={{ fontSize: '13px' }} noWrap>
+              Export All:CSV
+            </Typography>
+          </CSVLink>
+        ) : null}
       </Button>
       {btnInfo.isDele ? (
         <Modal
@@ -79,12 +114,12 @@ const ProductPageFooter = (props: Props) => {
           aria-describedby="modal-modal-description"
         >
           <Box className="modal_content" style={{ backgroundColor: '#323259' }}>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start' }}>
+            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '20px' }}>
               <Typography variant="h6" style={{ margin: 'auto' }}>
                 Confirm Delete
               </Typography>
             </div>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start' }}>
+            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '25px' }}>
               <Typography style={{ margin: 'auto' }}>Do you want to delete this product?</Typography>
             </div>
             <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between' }}>
@@ -111,12 +146,12 @@ const ProductPageFooter = (props: Props) => {
           aria-describedby="modal-modal-description"
         >
           <Box className="modal_content" style={{ backgroundColor: '#323259' }}>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start' }}>
+            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '20px' }}>
               <Typography variant="h6" style={{ margin: 'auto' }}>
                 Confirm Update
               </Typography>
             </div>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start' }}>
+            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '25px' }}>
               <Typography style={{ margin: 'auto' }}>Do you want to update this product?</Typography>
             </div>
             <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between' }}>
