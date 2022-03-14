@@ -36,7 +36,7 @@ const Shipping = (props: Props) => {
               sx={{ fontSize: '16px', color: 'white', marginRight: '15px', alignSelf: 'center', width: '15%' }}
               noWrap
             >
-              {item.zone_name}
+              {item.name}
               {index === 0 && <span style={{ color: 'red' }}> *</span>}
             </Typography>
             <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
@@ -94,7 +94,7 @@ const Shipping = (props: Props) => {
             {data?.shipping?.map((item, index) => {
               return (
                 <option key={item.id} value={index}>
-                  {item.zone_name}
+                  {item.name}
                 </option>
               );
             })}

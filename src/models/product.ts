@@ -60,7 +60,7 @@ interface images {
 
 export interface IShipping {
   id: string;
-  zone_name?: string;
+  name?: string;
   price: string;
 }
 

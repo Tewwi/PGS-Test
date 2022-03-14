@@ -39,7 +39,7 @@ const AddProductPage = () => {
       shipping_to_zones: [
         {
           id: '1',
-          zone_name: 'Continental U.S.',
+          name: 'Continental U.S.',
           price: '0.00',
         },
       ],
@@ -81,13 +81,7 @@ const AddProductPage = () => {
       },
     };
 
-    const json = await axios.put(
-      API_PATHS.createProduct,
-      {
-        productDetail: body,
-      },
-      config,
-    );
+    const json = await axios.post(API_PATHS.createProduct, { productDetail: body }, config);
     console.log(json);
     if (json) {
       const resp = await axios.post(
