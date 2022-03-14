@@ -18,7 +18,7 @@ export interface AddPageComProps {
 }
 
 const AddProduct = (props: AddPageComProps) => {
-  const { control, data, error } = props;
+  const { control, data, error, defaultValue } = props;
   const required = { required: { value: true, message: 'This field is requierd' } };
 
   return (
@@ -49,15 +49,16 @@ const AddProduct = (props: AddPageComProps) => {
             control={control}
             name="vendor_id"
             rules={required}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value, ...props } }) => (
               <>
                 <Autocomplete
+                  {...props}
                   value={value || null}
+                  isOptionEqualToValue={(option, value) => +option?.id == +value.id}
                   options={data?.vendor || []}
-                  getOptionLabel={(item) => (item.name ? item.name : '')}
-                  isOptionEqualToValue={(option, value) => +option?.id === +value.id}
+                  getOptionLabel={(item) => (item ? item.name : '')}
                   onChange={(event, item) => {
-                    onChange(item ? item.id : '');
+                    onChange(item ? item : '');
                   }}
                   renderInput={(params) => (
                     <div ref={params.InputProps.ref}>
@@ -176,7 +177,7 @@ const AddProduct = (props: AddPageComProps) => {
         >
           Image<span style={{ color: 'red' }}> *</span>
         </Typography>
-        <DropInput nameInput="imagesOrder" control={control} />
+        <DropInput nameInput="imagesOrder" control={control} dataDefault={defaultValue} />
         <Typography style={{ color: 'red' }}>{error ? error?.image?.message : ''}</Typography>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>

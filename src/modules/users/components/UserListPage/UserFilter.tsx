@@ -12,6 +12,7 @@ import {
   Checkbox,
   Collapse,
   Grid,
+  Input,
   ListItemText,
   MenuItem,
   OutlinedInput,
@@ -105,19 +106,22 @@ const UserFilter = (props: Props) => {
                   {...props}
                   value={value}
                   multiple
-                  input={<OutlinedInput className="field_input_user" />}
+                  input={<Input className="field_input_user" />}
                   renderValue={() => handleRenderSelectValue(memberships, value, 'label', 'value').join(', ')}
                   MenuProps={MenuProps}
                 >
                   {(Object.keys(memberships) as Array<keyof typeof memberships>).map((key, index) => (
-                    <div key={index}>
-                      <Typography>{key.replace('_', ' ')}</Typography>
+                    <div key={index} style={{ backgroundColor: '#323259' }}>
+                      <Typography sx={{ marginLeft: '15px', color: 'white' }}>{key.replace('_', ' ')}</Typography>
                       <div key={index}>
                         {memberships[key].map((item, i) => {
                           return (
                             <MenuItem key={i} onClick={() => handleSelectCheckBox(onChange, value, item.value)}>
-                              <Checkbox checked={value.indexOf(item.value) > -1} />
-                              <ListItemText primary={item.label} />
+                              <Checkbox sx={{ color: 'white' }} checked={value.indexOf(item.value) > -1} />
+                              <ListItemText
+                                disableTypography
+                                primary={<Typography style={{ color: 'white' }}>{item.label}</Typography>}
+                              />
                             </MenuItem>
                           );
                         })}
@@ -138,19 +142,22 @@ const UserFilter = (props: Props) => {
                   {...props}
                   value={value}
                   multiple
-                  input={<OutlinedInput placeholder="All user types" className="field_input_user" />}
+                  input={<Input placeholder="All user types" className="field_input_user" />}
                   renderValue={() => handleRenderSelectValue(role, value, 'name', 'id').join(', ')}
                   MenuProps={MenuProps}
                 >
                   {role &&
                     (Object.keys(role) as Array<keyof typeof role>).map((key, index) => (
-                      <div key={index}>
-                        <Typography>{key}</Typography>
+                      <div key={index} style={{ backgroundColor: '#323259' }}>
+                        <Typography sx={{ marginLeft: '15px', color: 'white' }}>{key}</Typography>
                         {role[key].map((item) => {
                           return (
                             <MenuItem key={item.id} onClick={() => handleSelectCheckBox(onChange, value, item.id)}>
-                              <Checkbox checked={value.indexOf(item.id) > -1} />
-                              <ListItemText primary={item.name} />
+                              <Checkbox sx={{ color: 'white' }} checked={value.indexOf(item.id) > -1} />
+                              <ListItemText
+                                disableTypography
+                                primary={<Typography style={{ color: 'white' }}>{item.name}</Typography>}
+                              />
                             </MenuItem>
                           );
                         })}
@@ -210,7 +217,13 @@ const UserFilter = (props: Props) => {
       >
         <div
           onClick={() => setMoreOption(!moreOption)}
-          style={{ backgroundColor: '#323259', width: '40px', height: '20px', display: 'flex' }}
+          style={{
+            backgroundColor: '#323259',
+            width: '40px',
+            height: '20px',
+            display: 'flex',
+            borderRadius: '0px 0px 5px 5px',
+          }}
         >
           {moreOption ? (
             <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ margin: 'auto' }} />

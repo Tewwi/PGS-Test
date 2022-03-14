@@ -239,7 +239,9 @@ const ProductsListPage = () => {
       <div style={{ position: 'relative' }}>
         <div style={{ width: '100vw', backgroundColor: '#1b1b38' }}>
           <Container maxWidth="lg" sx={{ padding: '16px' }}>
-            <Typography sx={{ color: 'white' }}>Products</Typography>
+            <Typography variant="h4" sx={{ color: 'white' }}>
+              Products
+            </Typography>
             <ProductsFilter handleFilter={handleFilter} />
             <div style={{ height: '40px', margin: '20px 0px' }}>
               <Button
@@ -281,7 +283,12 @@ const ProductsListPage = () => {
             handleChangItemPerPage={handleChangItemPerPage}
           />
         </div>
-        <ProductPageFooter btnInfo={btnInfo} handleSaveBtn={handleSaveBtn} handleRemovebtn={handleRemovebtn} />
+        <ProductPageFooter
+          data={tableData}
+          btnInfo={btnInfo}
+          handleSaveBtn={handleSaveBtn}
+          handleRemovebtn={handleRemovebtn}
+        />
       </div>
     </>
   );

@@ -61,12 +61,12 @@ const TableItem = (props: Props) => {
         aria-describedby="modal-modal-description"
       >
         <Box className="modal_content" style={{ backgroundColor: '#323259' }}>
-          <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start' }}>
+          <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '20px' }}>
             <Typography variant="h6" style={{ margin: 'auto' }}>
               Confirm Update
             </Typography>
           </div>
-          <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start' }}>
+          <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '25px' }}>
             <Typography style={{ margin: 'auto' }}>Do you want to update this product?</Typography>
           </div>
           <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between' }}>

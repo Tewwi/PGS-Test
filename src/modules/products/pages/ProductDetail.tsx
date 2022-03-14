@@ -97,7 +97,10 @@ const ProductDetail = () => {
         convertFromHTML(resp.data.description) as any,
         'change-block-data',
       );
-      const vendor = dataField.vendor?.filter((item) => item.id == resp.data.vendor_id)[0];
+      const vendor = dataField.vendor?.filter((item) => {
+        return item.id == resp.data.vendor_id;
+      })[0];
+
       const time = dayjs(resp.data.arrival_date * 1000).format('YYYY-MM-DD');
       setDataDetail({
         ...resp.data,
@@ -105,6 +108,7 @@ const ProductDetail = () => {
         vendor_id: vendor,
         arrival_date: time,
         shipping_to_zones: resp.data.shipping,
+        categories: resp.data.categories.map((item: any) => item.category_id),
       });
       return;
     }
@@ -183,7 +187,7 @@ const ProductDetail = () => {
     >
       <div style={{ padding: '16px', width: '100%' }}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
-          <AddProduct data={dataField} control={control} error={errors} />
+          <AddProduct data={dataField} control={control} error={errors} defaultValue={dataDetail} />
           <Price data={dataField} control={control} error={errors} />
           <Shipping
             rest={{ control: control, data: dataField, error: errors }}

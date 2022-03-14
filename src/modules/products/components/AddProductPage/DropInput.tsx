@@ -25,10 +25,11 @@ const useStyles = makeStyles(() => ({
 interface Props {
   control: Control<ProductCreateParam, any>;
   nameInput: 'imagesOrder';
+  dataDefault?: ProductCreateParam;
 }
 
 const DropInput = (props: Props) => {
-  const { control, nameInput } = props;
+  const { control, nameInput, dataDefault } = props;
   const [images, setImages] = React.useState<any[]>([]);
   const styles = useStyles();
 
@@ -42,7 +43,7 @@ const DropInput = (props: Props) => {
     }
   };
 
-  const handleRemoveImg = (value: string[], index: number) => {
+  const handleRemoveImg = (value: File[], index: number) => {
     setImages((prev) => prev.filter((item, i) => i !== index));
     const newData = value.filter((item, i) => i !== index);
     return newData;
@@ -53,10 +54,11 @@ const DropInput = (props: Props) => {
       <Controller
         control={control}
         name={nameInput}
-        defaultValue={[]}
+        defaultValue={images}
         rules={{ required: { value: true, message: 'This field is requierd' } }}
         render={({ field: { onChange, onBlur, value } }) => (
           <>
+            {console.log(value)}
             <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
               <Dropzone
                 multiple={true}
@@ -68,17 +70,14 @@ const DropInput = (props: Props) => {
                 {({ getRootProps, getInputProps }) => (
                   <div className={styles.root} {...getRootProps()}>
                     <CameraAltIcon className={styles.icon} />
-                    <input {...getInputProps()} multiple={true} name={nameInput} onBlur={onBlur} />
+                    <input {...getInputProps()} multiple={true} name={nameInput} onBlur={onBlur} type="file" />
                   </div>
                 )}
               </Dropzone>
               <List style={{ display: 'flex', height: '100%', marginRight: '20px' }}>
-                {value.map((f: any, index: number) => (
+                {images.map((f: any, index: number) => (
                   <ListItem key={index} style={{ height: '70px', width: '70px', padding: '0', marginLeft: '10px' }}>
-                    <img
-                      src={images[index]}
-                      style={{ objectFit: 'cover', height: '100%', width: '100%', padding: '0' }}
-                    />
+                    <img src={f} style={{ objectFit: 'cover', height: '100%', width: '100%', padding: '0' }} />
                     <div
                       onClick={() => {
                         onChange(handleRemoveImg(value, index));

@@ -25,7 +25,7 @@ import { ProductFilter } from '../../../../models/product';
 import { AppState } from '../../../../redux/reducer';
 import { fetchThunk } from '../../../common/redux/thunk';
 import { Vendor } from '../../../../models/product';
-import { checkBoxValue } from '../../utils';
+import { availabilityStatus, checkBoxValue, stockStatus } from '../../utils';
 
 interface Props {
   handleFilter(data: ProductFilter): void;
@@ -101,86 +101,43 @@ const ProductsFilter = (props: Props) => {
     >
       <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
         <Grid container sx={{ justifyContent: 'space-around', padding: '8px' }}>
-          <Grid
-            item
-            xs={6}
-            style={{
-              backgroundColor: '#1b1b38',
-              display: 'flex',
-              height: '30px',
-            }}
-          >
+          <Grid item xs={6}>
             <Controller
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  sx={{ backgroundColor: '#1b1b38', margin: 'auto', color: ' white', width: '95%', height: '100%' }}
-                  placeholder={'Search Keyword'}
-                  color="secondary"
-                />
-              )}
+              render={({ field }) => <input {...field} placeholder={'Search Keyword'} className="field_input_user" />}
               name="search"
               control={control}
               defaultValue=""
             />
           </Grid>
-          <Grid item xs={2} style={{ backgroundColor: '#1b1b38', display: 'flex', height: '30px' }}>
+          <Grid item xs={2}>
             <Controller
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  variant="filled"
-                  defaultValue="0"
-                  color="secondary"
-                  sx={{
-                    backgroundColor: 'transparent',
-                    margin: 'auto',
-                    color: ' white',
-                    width: '95%',
-                    height: '100%',
-                    paddingBottom: '12px',
-                  }}
-                >
-                  <MenuItem value="0">
-                    <em>Any Catagory</em>
-                  </MenuItem>
-                  {category.map((item: any, index) => {
-                    return (
-                      <MenuItem key={index} value={item.id}>
-                        {item.name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              )}
               name="category"
               control={control}
               defaultValue="0"
+              render={({ field }) => (
+                <select {...field} className="field_input_user">
+                  <option value="0">Any Catagory</option>
+                  {category.map((item: any, index) => {
+                    return (
+                      <option key={index} value={item.id}>
+                        {item.name}
+                      </option>
+                    );
+                  })}
+                </select>
+              )}
             />
           </Grid>
-          <Grid item xs={2} style={{ backgroundColor: '#1b1b38', display: 'flex', height: '30px' }}>
+          <Grid item xs={2}>
             <Controller
               render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  variant="filled"
-                  color="secondary"
-                  defaultValue="all"
-                  sx={{
-                    backgroundColor: 'transparent',
-                    margin: 'auto',
-                    color: ' white',
-                    width: '95%',
-                    paddingBottom: '12px',
-                    height: '100%',
-                  }}
-                >
-                  <MenuItem value="all">Any Stock Status</MenuItem>
-                </Select>
+                <select {...field} className="field_input_user">
+                  {stockStatus.map((item, i) => (
+                    <option key={i} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
               )}
               name="stock_status"
               control={control}
@@ -221,6 +178,7 @@ const ProductsFilter = (props: Props) => {
                               control={
                                 <Checkbox
                                   value={item}
+                                  sx={{ color: 'white' }}
                                   checked={field.value?.includes(item) || false}
                                   onChange={(e, checked) => onChangeCheckBox(e, checked, { ...field })}
                                 />
@@ -245,28 +203,13 @@ const ProductsFilter = (props: Props) => {
                 <Controller
                   render={({ field }) => (
                     <>
-                      <Select
-                        {...field}
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        variant="filled"
-                        color="secondary"
-                        defaultValue="all"
-                        sx={{
-                          backgroundColor: 'transparent',
-                          margin: 'auto',
-                          color: ' white',
-                          width: '95%',
-                          height: '100%',
-                          paddingBottom: '12px',
-                        }}
-                      >
-                        <MenuItem value="all">
-                          <em>Any Availability Status</em>
-                        </MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
+                      <select {...field} className="field_input_user">
+                        {availabilityStatus.map((item, i) => (
+                          <option key={i} value={item.value}>
+                            {item.label}
+                          </option>
+                        ))}
+                      </select>
                     </>
                   )}
                   name="availability"
@@ -294,17 +237,7 @@ const ProductsFilter = (props: Props) => {
                       isOptionEqualToValue={(option, value) => option.id === value.id}
                       renderInput={(params) => (
                         <div ref={params.InputProps.ref}>
-                          <input
-                            type="text"
-                            {...params.inputProps}
-                            style={{
-                              border: '1px solid transparent',
-                              outline: 'none',
-                              backgroundColor: 'transparent',
-                              color: 'white',
-                              width: '100%',
-                            }}
-                          />
+                          <input type="text" {...params.inputProps} className="field_input_user" />
                         </div>
                       )}
                     />
@@ -326,7 +259,13 @@ const ProductsFilter = (props: Props) => {
       >
         <div
           onClick={() => setMoreOption(!moreOption)}
-          style={{ backgroundColor: '#323259', width: '40px', height: '20px', display: 'flex' }}
+          style={{
+            backgroundColor: '#323259',
+            width: '40px',
+            height: '20px',
+            display: 'flex',
+            borderRadius: '0px 0px 5px 5px',
+          }}
         >
           {moreOption ? (
             <KeyboardDoubleArrowUpIcon fontSize="small" sx={{ margin: 'auto' }} />

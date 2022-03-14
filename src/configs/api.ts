@@ -31,4 +31,5 @@ export const API_PATHS = {
   getUserList: `${getBaseUrl(APIService.auth)}/users/list`,
   editUser: `${getBaseUrl(APIService.auth)}/users/edit`,
   createUser: `${getBaseUrl(APIService.auth)}/users/create`,
+  uploadImg: `${getBaseUrl(APIService.public)}/products/upload-image`,
 };

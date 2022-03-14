@@ -69,21 +69,38 @@ const AddProductPage = () => {
 
   const onSubmit = async (data: ProductCreateParam) => {
     console.log({ ...data, description: convertToHTML(data.description.getCurrentContent()) });
-    const body = { ...data, description: convertToHTML(data.description.getCurrentContent()) };
+    const body = {
+      ...data,
+      description: convertToHTML(data.description.getCurrentContent()),
+      vendor_id: data.vendor_id.id,
+    };
     const config = {
       headers: {
         'content-type': 'multipart/form-data',
         Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
       },
     };
-    const json = await axios.put(API_PATHS.createProduct, body, config);
+
+    const json = await axios.put(
+      API_PATHS.createProduct,
+      {
+        productDetail: body,
+      },
+      config,
+    );
     console.log(json);
     if (json) {
-      console.log('success');
-      dispatch(replace(ROUTES.productList));
+      const resp = await axios.post(
+        API_PATHS.uploadImg,
+        { productId: +json.data, order: 0, images: body.imagesOrder },
+        config,
+      );
+      console.log(resp);
+      // dispatch(replace(ROUTES.productList));
       return;
     }
 
+    console.log('error');
     return;
   };
 

@@ -14,7 +14,6 @@ interface Props {
 const Shipping = (props: Props) => {
   const { control, data, error } = props.rest;
   const [shippingLocationIndex, setShippingLocationIndex] = React.useState<number>(0);
-  console.log(props.fields);
 
   return (
     <div

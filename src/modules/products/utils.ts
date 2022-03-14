@@ -87,3 +87,37 @@ export const MenuProps = {
     },
   },
 };
+
+export const stockStatus = [
+  {
+    label: 'Any status',
+    value: 'all',
+  },
+  {
+    label: 'In Stock',
+    value: 'in',
+  },
+  {
+    label: 'Low stock',
+    value: 'low',
+  },
+  {
+    label: 'SOLD',
+    value: 'out',
+  },
+];
+
+export const availabilityStatus = [
+  {
+    label: 'Any availability status',
+    value: 'all',
+  },
+  {
+    label: 'Only enabled',
+    value: '1',
+  },
+  {
+    label: 'Only disabled',
+    value: '0',
+  },
+];

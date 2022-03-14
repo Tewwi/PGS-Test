@@ -52,6 +52,12 @@ export interface Condition {
   name: string;
 }
 
+interface images {
+  id: string;
+  file: string;
+  thumb: string[];
+}
+
 export interface IShipping {
   id: string;
   zone_name?: string;
@@ -64,7 +70,7 @@ export interface ProductCreateParam {
   brand_id: string;
   condition_id: string;
   sku?: string;
-  imagesOrder: string[];
+  imagesOrder: File[];
   categories: number[];
   description: any;
   enabled?: number;
@@ -84,4 +90,5 @@ export interface ProductCreateParam {
   product_page_title?: string;
   facebook_marketing_enabled?: number;
   google_feed_enabled?: number;
+  images?: images[];
 }

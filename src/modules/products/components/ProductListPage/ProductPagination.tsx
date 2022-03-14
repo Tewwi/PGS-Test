@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, Pagination, Select, Typography } from '@mui/material';
+import { FormControl, Pagination, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, { useMemo } from 'react';
 import { optionItemPerPage } from '../../utils';
