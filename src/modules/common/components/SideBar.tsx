@@ -46,11 +46,11 @@ const SideBar = (props: Props) => {
         </ListItemButton>
         <Collapse in={catalogOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton sx={{ pl: 4 }}>
-              <Link to={ROUTES.productList} style={{ textDecoration: 'none', color: 'white' }}>
+            <Link to={ROUTES.productList} style={{ textDecoration: 'none', color: 'white' }}>
+              <ListItemButton sx={{ pl: 4 }}>
                 <ListItemText primary="Products" />
-              </Link>
-            </ListItemButton>
+              </ListItemButton>
+            </Link>
           </List>
         </Collapse>
         <ListItemButton onClick={() => setUserOpen(!userOpen)}>
@@ -62,11 +62,11 @@ const SideBar = (props: Props) => {
         </ListItemButton>
         <Collapse in={userOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton sx={{ pl: 4 }}>
-              <Link to={ROUTES.userList} style={{ textDecoration: 'none', color: 'white' }}>
+            <Link to={ROUTES.userList} style={{ textDecoration: 'none', color: 'white' }}>
+              <ListItemButton sx={{ pl: 4 }}>
                 <ListItemText sx={{ fontSize: '13px' }} primary="User List" />
-              </Link>
-            </ListItemButton>
+              </ListItemButton>
+            </Link>
           </List>
         </Collapse>
       </List>
