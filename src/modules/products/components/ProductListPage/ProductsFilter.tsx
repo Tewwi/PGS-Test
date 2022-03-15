@@ -10,9 +10,6 @@ import {
   FormGroup,
   FormLabel,
   Grid,
-  Input,
-  MenuItem,
-  Select,
   Typography,
 } from '@mui/material';
 import React, { useEffect } from 'react';
@@ -21,10 +18,9 @@ import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
 import { API_PATHS } from '../../../../configs/api';
-import { ProductFilter } from '../../../../models/product';
+import { ProductFilter, Vendor } from '../../../../models/product';
 import { AppState } from '../../../../redux/reducer';
 import { fetchThunk } from '../../../common/redux/thunk';
-import { Vendor } from '../../../../models/product';
 import { availabilityStatus, checkBoxValue, stockStatus } from '../../utils';
 
 interface Props {
@@ -99,7 +95,7 @@ const ProductsFilter = (props: Props) => {
         backgroundColor: '#323259',
       }}
     >
-      <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
         <Grid container sx={{ justifyContent: 'space-around', padding: '8px' }}>
           <Grid item xs={6}>
             <Controller

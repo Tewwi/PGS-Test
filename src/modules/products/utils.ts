@@ -86,6 +86,7 @@ export const MenuProps = {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_BOTTOM,
       width: 250,
+      backgroundColor: '#323259',
     },
   },
 };

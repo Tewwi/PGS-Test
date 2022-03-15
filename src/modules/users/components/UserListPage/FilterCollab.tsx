@@ -177,7 +177,6 @@ const FilterCollab = (props: Props) => {
                   startDate={value[0]}
                   endDate={value[1]}
                   {...props}
-                  // dateFormat="DD MMM,YYYY"
                   selectsRange
                   placeholderText="Enter Date Range"
                   customInput={<input className="field_input_user" />}

@@ -1,3 +1,6 @@
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import { Button, Checkbox, Collapse, Grid, Input, ListItemText, MenuItem, Select, Typography } from '@mui/material';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -7,22 +10,8 @@ import { API_PATHS } from '../../../../configs/api';
 import { Country, FilterParam, UserRole } from '../../../../models/userList';
 import { AppState } from '../../../../redux/reducer';
 import { fetchThunk } from '../../../common/redux/thunk';
-import {
-  Button,
-  Checkbox,
-  Collapse,
-  Grid,
-  Input,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  Typography,
-} from '@mui/material';
 import { MenuProps } from '../../../products/utils';
 import { memberships, userStatus } from '../../util';
-import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
-import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import FilterCollab from './FilterCollab';
 
 interface Props {
@@ -86,7 +75,7 @@ const UserFilter = (props: Props) => {
         backgroundColor: '#323259',
       }}
     >
-      <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
         <Grid container spacing={2} sx={{ justifyContent: 'space-around', padding: '8px' }}>
           <Grid item xs={3}>
             <Controller
@@ -96,7 +85,7 @@ const UserFilter = (props: Props) => {
               render={({ field }) => <input {...field} className="field_input_user" />}
             />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={3} className="aaa">
             <Controller
               name="memberships"
               control={control}
@@ -106,13 +95,30 @@ const UserFilter = (props: Props) => {
                   {...props}
                   value={value}
                   multiple
-                  input={<Input className="field_input_user" />}
+                  className="filter_dropdown"
+                  input={
+                    <Input
+                      inputProps={{
+                        underline: {
+                          '&&&:before': {
+                            borderBottom: 'none',
+                          },
+                          '&&:after': {
+                            borderBottom: 'none',
+                          },
+                        },
+                      }}
+                      className="field_input_user"
+                    />
+                  }
                   renderValue={() => handleRenderSelectValue(memberships, value, 'label', 'value').join(', ')}
                   MenuProps={MenuProps}
                 >
                   {(Object.keys(memberships) as Array<keyof typeof memberships>).map((key, index) => (
-                    <div key={index} style={{ backgroundColor: '#323259' }}>
-                      <Typography sx={{ marginLeft: '15px', color: 'white' }}>{key.replace('_', ' ')}</Typography>
+                    <div key={index} style={{ backgroundColor: '#323259', marginTop: '10px' }}>
+                      <Typography style={{ marginLeft: '15px', color: 'white', textTransform: 'capitalize' }}>
+                        {key.replace('_', ' ')}
+                      </Typography>
                       <div key={index}>
                         {memberships[key].map((item, i) => {
                           return (
@@ -148,8 +154,10 @@ const UserFilter = (props: Props) => {
                 >
                   {role &&
                     (Object.keys(role) as Array<keyof typeof role>).map((key, index) => (
-                      <div key={index} style={{ backgroundColor: '#323259' }}>
-                        <Typography sx={{ marginLeft: '15px', color: 'white' }}>{key}</Typography>
+                      <div key={index} style={{ backgroundColor: '#323259', marginTop: '10px' }}>
+                        <Typography sx={{ marginLeft: '15px', color: 'white', textTransform: 'capitalize' }}>
+                          {key}
+                        </Typography>
                         {role[key].map((item) => {
                           return (
                             <MenuItem key={item.id} onClick={() => handleSelectCheckBox(onChange, value, item.id)}>
