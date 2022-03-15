@@ -52,10 +52,10 @@ export interface Condition {
   name: string;
 }
 
-interface images {
+export interface Images {
   id: string;
   file: string;
-  thumb: string[];
+  thumbs: string[];
 }
 
 export interface IShipping {
@@ -70,7 +70,7 @@ export interface ProductCreateParam {
   brand_id: string;
   condition_id: string;
   sku?: string;
-  imagesOrder: File[];
+  imagesOrder: string[];
   categories: number[];
   description: any;
   enabled?: number;
@@ -90,5 +90,7 @@ export interface ProductCreateParam {
   product_page_title?: string;
   facebook_marketing_enabled?: number;
   google_feed_enabled?: number;
-  images?: images[];
+  images: Images[];
+  imgUpload: File[];
+  deleted_images?: number[];
 }

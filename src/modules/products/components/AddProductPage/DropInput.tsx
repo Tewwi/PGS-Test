@@ -2,7 +2,7 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { List, ListItem } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { Control, Controller } from 'react-hook-form';
 import { ProductCreateParam } from '../../../../models/product';
@@ -24,13 +24,17 @@ const useStyles = makeStyles(() => ({
 
 interface Props {
   control: Control<ProductCreateParam, any>;
-  nameInput: 'imagesOrder';
+  nameInput: 'imgUpload';
   dataDefault?: ProductCreateParam;
+  handleDeleImg?: (id: number) => void;
 }
 
 const DropInput = (props: Props) => {
   const { control, nameInput, dataDefault } = props;
-  const [images, setImages] = React.useState<any[]>([]);
+  const [images, setImages] = useState<any[]>([]);
+  const [imgId, setImgId] = useState<number[]>([]);
+  const [valueUpload, setValueUpload] = useState<any[]>([]);
+  const required = { required: { value: true, message: 'This field is requierd' } };
   const styles = useStyles();
 
   const handlePrevImg = (value: File[]) => {
@@ -44,10 +48,34 @@ const DropInput = (props: Props) => {
   };
 
   const handleRemoveImg = (value: File[], index: number) => {
-    setImages((prev) => prev.filter((item, i) => i !== index));
-    const newData = value.filter((item, i) => i !== index);
+    setImages((prev) => prev.filter((_item, i) => i !== index));
+    const newData = value.filter((_item, i) => i !== index);
+    if (dataDefault && props.handleDeleImg && imgId[index]) {
+      props.handleDeleImg(imgId[index]);
+      setImgId((prev) => prev.filter((item) => item !== imgId[index]));
+    }
     return newData;
   };
+
+  const handleValueUpload = (file: File[]) => {
+    const result = [...valueUpload, file];
+    setValueUpload((prev) => [...prev, file]);
+    console.log(result);
+    return result;
+  };
+
+  useEffect(() => {
+    if (dataDefault && dataDefault.images[0]) {
+      setImages(() => {
+        const temp = dataDefault.images.map((item) => {
+          return item.thumbs[1];
+        });
+        return temp;
+      });
+      setImgId(dataDefault.images.map((item) => +item.id));
+    }
+    return;
+  }, [dataDefault]);
 
   return (
     <>
@@ -55,16 +83,15 @@ const DropInput = (props: Props) => {
         control={control}
         name={nameInput}
         defaultValue={images}
-        rules={{ required: { value: true, message: 'This field is requierd' } }}
+        rules={dataDefault ? {} : required}
         render={({ field: { onChange, onBlur, value } }) => (
           <>
-            {console.log(value)}
             <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
               <Dropzone
                 multiple={true}
                 onDrop={(file: File[]) => {
                   handlePrevImg(file);
-                  onChange([...value, file]);
+                  onChange(handleValueUpload(file));
                 }}
               >
                 {({ getRootProps, getInputProps }) => (

@@ -23,6 +23,7 @@ import Shipping from '../components/AddProductPage/Shipping';
 import { fieldData } from './AddProductPage';
 import { Button, Typography } from '@mui/material';
 import { replace } from 'connected-react-router';
+import { concatImgOrder } from '../utils';
 
 const ProductDetail = () => {
   const { id } = useParams() as {
@@ -43,6 +44,7 @@ const ProductDetail = () => {
     defaultValues: dataDetail,
   });
   const { fields, append, remove } = useFieldArray({ name: 'shipping_to_zones', control });
+  const [deleItemIndex, setDeleItemIndex] = useState<number[]>([]);
 
   const fetchAllData = useCallback(async () => {
     setLoading(true);
@@ -133,27 +135,62 @@ const ProductDetail = () => {
     [remove],
   );
 
+  const handleDeleImg = useCallback((id: number) => {
+    console.log(id);
+    setDeleItemIndex((prev) => [...prev, id]);
+  }, []);
+
   const onSubmit = useCallback(
     async (data: ProductCreateParam) => {
-      console.log({ ...data, description: convertToHTML(data.description.getCurrentContent()) });
-      const body = { ...data, description: convertToHTML(data.description.getCurrentContent()) };
+      console.log({
+        ...data,
+        description: convertToHTML(data.description.getCurrentContent()),
+        imagesOrder: concatImgOrder(dataDetail?.images, deleItemIndex, data.imgUpload),
+        deleted_images: deleItemIndex,
+      });
+      const body = {
+        ...data,
+        description: convertToHTML(data.description.getCurrentContent()),
+        vendor_id: data.vendor_id.id,
+        imagesOrder: concatImgOrder(dataDetail?.images, deleItemIndex, data.imgUpload),
+        deleted_images: deleItemIndex,
+      };
       const config = {
         headers: {
           'content-type': 'multipart/form-data',
           Authorization: Cookies.get(ACCESS_TOKEN_KEY) || '',
         },
       };
-      const json = await axios.put(API_PATHS.createProduct, body, config);
+
+      const formData = new FormData();
+      formData.append('productDetail', JSON.stringify(body));
+
+      const json = await axios.post(API_PATHS.createProduct, formData, config);
+
       console.log(json);
       if (json) {
-        console.log('success');
-        dispatch(replace(ROUTES.productList));
+        if (body.imgUpload.length > 0) {
+          const temp = body.imgUpload.map((item: any, index: number) => {
+            const formData = new FormData();
+            formData.append('productId', json.data.data);
+            formData.append('order', JSON.stringify(index));
+            formData.append('images[]', item[0]);
+            return formData;
+          });
+
+          const tempResult = await Promise.all(temp.map((item: any) => axios.post(API_PATHS.uploadImg, item, config)));
+
+          console.log(tempResult);
+        }
+
+        dispatch(replace(`${ROUTES.productDetail}/${json.data.data}`));
         return;
       }
 
+      console.log('error');
       return;
     },
-    [dispatch],
+    [dispatch, deleItemIndex, dataDetail?.images],
   );
 
   useEffect(() => {
@@ -187,7 +224,10 @@ const ProductDetail = () => {
     >
       <div style={{ padding: '16px', width: '100%' }}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
-          <AddProduct data={dataField} control={control} error={errors} defaultValue={dataDetail} />
+          <AddProduct
+            rest={{ control: control, data: dataField, error: errors, defaultValue: dataDetail }}
+            handleDeleImg={handleDeleImg}
+          />
           <Price data={dataField} control={control} error={errors} />
           <Shipping
             rest={{ control: control, data: dataField, error: errors }}

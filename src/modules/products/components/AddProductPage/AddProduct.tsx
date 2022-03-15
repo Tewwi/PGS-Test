@@ -17,8 +17,13 @@ export interface AddPageComProps {
   defaultValue?: ProductCreateParam;
 }
 
-const AddProduct = (props: AddPageComProps) => {
-  const { control, data, error, defaultValue } = props;
+interface Props {
+  rest: AddPageComProps;
+  handleDeleImg?: (id: number) => void;
+}
+
+const AddProduct = (props: Props) => {
+  const { control, data, error, defaultValue } = props.rest;
   const required = { required: { value: true, message: 'This field is requierd' } };
 
   return (
@@ -177,7 +182,12 @@ const AddProduct = (props: AddPageComProps) => {
         >
           Image<span style={{ color: 'red' }}> *</span>
         </Typography>
-        <DropInput nameInput="imagesOrder" control={control} dataDefault={defaultValue} />
+        <DropInput
+          nameInput="imgUpload"
+          control={control}
+          dataDefault={defaultValue}
+          handleDeleImg={props.handleDeleImg}
+        />
         <Typography style={{ color: 'red' }}>{error ? error?.image?.message : ''}</Typography>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>

@@ -68,11 +68,16 @@ const AddProductPage = () => {
   );
 
   const onSubmit = async (data: ProductCreateParam) => {
-    console.log({ ...data, description: convertToHTML(data.description.getCurrentContent()) });
+    console.log({
+      ...data,
+      description: convertToHTML(data.description.getCurrentContent()),
+      imagesOrder: data.images.map((item: any) => item[0].name),
+    });
     const body = {
       ...data,
       description: convertToHTML(data.description.getCurrentContent()),
       vendor_id: data.vendor_id.id,
+      imagesOrder: data.images.map((item: any) => item[0].name),
     };
     const config = {
       headers: {
@@ -81,16 +86,28 @@ const AddProductPage = () => {
       },
     };
 
-    const json = await axios.post(API_PATHS.createProduct, { productDetail: body }, config);
+    const formData = new FormData();
+    formData.append('productDetail', JSON.stringify(body));
+
+    const json = await axios.post(API_PATHS.createProduct, formData, config);
+
     console.log(json);
     if (json) {
-      const resp = await axios.post(
-        API_PATHS.uploadImg,
-        { productId: +json.data, order: 0, images: body.imagesOrder },
-        config,
-      );
-      console.log(resp);
-      // dispatch(replace(ROUTES.productList));
+      if (body.imgUpload.length > 0) {
+        const temp = body.imgUpload.map((item: any, index: number) => {
+          const formData = new FormData();
+          formData.append('productId', json.data.data);
+          formData.append('order', JSON.stringify(index));
+          formData.append('images[]', item[0]);
+          return formData;
+        });
+
+        const tempResult = await Promise.all(temp.map((item: any) => axios.post(API_PATHS.uploadImg, item, config)));
+
+        console.log(tempResult);
+      }
+
+      dispatch(replace(`${ROUTES.productDetail}/${json.data.data}`));
       return;
     }
 
@@ -154,7 +171,7 @@ const AddProductPage = () => {
     >
       <div style={{ padding: '16px', width: '100%' }}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
-          <AddProduct data={data} control={control} error={errors} />
+          <AddProduct rest={{ control: control, data: data, error: errors }} />
           <Price data={data} control={control} error={errors} />
           <Shipping
             rest={{ control: control, data: data, error: errors }}

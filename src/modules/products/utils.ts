@@ -1,3 +1,5 @@
+import { Images } from '../../models/product';
+
 export const checkBoxValue = ['Name', 'SKU', 'Full Description'];
 export const optionItemPerPage = [10, 25, 50, 75, 100];
 
@@ -121,3 +123,19 @@ export const availabilityStatus = [
     value: '0',
   },
 ];
+
+export const concatImgOrder = (imagesApi?: Images[], deleIndex?: number[], imageUpload?: File[]) => {
+  if (imagesApi && deleIndex) {
+    const newImgApi = imagesApi.filter((item) => {
+      return !deleIndex.includes(+item.id);
+    });
+
+    let newData = newImgApi.map((item) => item.file);
+    if (imageUpload && imageUpload.length > 0) {
+      newData = newData.concat(imageUpload.map((item: any) => item[0].name));
+    }
+    return newData;
+  } else {
+    return [];
+  }
+};

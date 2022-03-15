@@ -201,7 +201,12 @@ const ProductsListPage = () => {
         params: deleItem,
       }),
     );
+    setTableData((prev) => {
+      return prev?.filter((item) => item.isDele === false);
+    });
+    setTotalItem((prev) => prev - deleItem.length);
     setLoading(false);
+    setDeleItem([]);
     console.log(resp);
     return;
   }, [dispatch, deleItem]);

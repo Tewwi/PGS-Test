@@ -128,6 +128,7 @@ const ProductPageFooter = (props: Props) => {
                 sx={{ color: '#ad84ff' }}
                 onClick={() => {
                   handleRemovebtn();
+                  setIsModalOpen(false);
                 }}
               >
                 Yes
