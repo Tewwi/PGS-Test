@@ -79,7 +79,7 @@ const AddProduct = (props: Props) => {
               </>
             )}
           />
-          <Typography style={{ color: 'red' }}>{error?.vendor ? error?.vendor?.message : ''}</Typography>
+          <Typography className="error_message">{error?.vendor_id ? error?.vendor_id?.message : ''}</Typography>
         </div>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
@@ -97,7 +97,7 @@ const AddProduct = (props: Props) => {
             defaultValue={''}
             render={({ field }) => <input {...field} type="text" className="field_input" />}
           />
-          <Typography style={{ color: 'red' }}>{error?.product_title ? error?.product_title?.message : ''}</Typography>
+          <Typography className="error_message">{error?.name ? error?.name?.message : ''}</Typography>
         </div>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
@@ -126,7 +126,7 @@ const AddProduct = (props: Props) => {
               </select>
             )}
           />
-          <Typography style={{ color: 'red' }}>{error ? error?.brand?.message : ''}</Typography>
+          <Typography className="error_message">{error.brand_id ? error?.brand_id?.message : ''}</Typography>
         </div>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
@@ -155,7 +155,7 @@ const AddProduct = (props: Props) => {
               </select>
             )}
           />
-          <Typography style={{ color: 'red' }}>{error ? error?.condition?.message : ''}</Typography>
+          <Typography className="error_message">{error.condition_id ? error?.condition_id?.message : ''}</Typography>
         </div>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
@@ -188,7 +188,7 @@ const AddProduct = (props: Props) => {
           dataDefault={defaultValue}
           handleDeleImg={props.handleDeleImg}
         />
-        <Typography style={{ color: 'red' }}>{error ? error?.image?.message : ''}</Typography>
+        <Typography className="error_message">{error ? error?.image?.message : ''}</Typography>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
         <Typography
@@ -227,7 +227,7 @@ const AddProduct = (props: Props) => {
               </Select>
             )}
           />
-          <Typography style={{ color: 'red' }}>{error ? error?.catagory?.message : ''}</Typography>
+          <Typography className="error_message">{error?.categories ? error?.categories?.message : ''}</Typography>
         </div>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
@@ -261,7 +261,7 @@ const AddProduct = (props: Props) => {
               );
             }}
           />
-          <Typography style={{ color: 'red' }}>{error ? error?.description?.message : ''}</Typography>
+          <Typography className="error_message">{error?.description ? error?.description?.message : ''}</Typography>
         </div>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
