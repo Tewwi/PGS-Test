@@ -9,7 +9,6 @@ interface Props {
 
 const UserListPageFooter = (props: Props) => {
   const { btnDisable, handleRemovebtn } = props;
-  console.log(btnDisable);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   return (
     <div

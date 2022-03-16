@@ -157,7 +157,7 @@ const UserListPage = () => {
     <>
       <CssBaseline />
       <div style={{ position: 'relative' }}>
-        <div style={{ width: '100vw', backgroundColor: '#1b1b38' }}>
+        <div style={{ width: '100%', backgroundColor: '#1b1b38', minHeight: '100vh' }}>
           <Container maxWidth="lg" sx={{ padding: '16px' }}>
             <Typography variant="h4" sx={{ color: 'white', marginBottom: '10px' }}>
               Search for users

@@ -59,6 +59,7 @@ const UserFilter = (props: Props) => {
   };
 
   const onSubmit = (data: FilterParam) => {
+    // console.log(data);
     props.handleFilter(data);
   };
 
@@ -96,21 +97,7 @@ const UserFilter = (props: Props) => {
                   value={value}
                   multiple
                   className="filter_dropdown"
-                  input={
-                    <Input
-                      inputProps={{
-                        underline: {
-                          '&&&:before': {
-                            borderBottom: 'none',
-                          },
-                          '&&:after': {
-                            borderBottom: 'none',
-                          },
-                        },
-                      }}
-                      className="field_input_user"
-                    />
-                  }
+                  input={<Input className="field_input_user" />}
                   renderValue={() => handleRenderSelectValue(memberships, value, 'label', 'value').join(', ')}
                   MenuProps={MenuProps}
                 >
