@@ -140,3 +140,7 @@ export const concatImgOrder = (imagesApi?: Images[], deleIndex?: number[], image
     return [];
   }
 };
+
+// const required = (name: string) => {
+//   return { required: { value: true, message: `${name} is requierd}`}};
+// }

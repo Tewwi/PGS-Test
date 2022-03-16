@@ -5,7 +5,7 @@ import { accessLevel, membershipsUser } from '../../util';
 import { CreateUserPageComProps } from './MainInfo';
 
 const AccessInfo = (props: CreateUserPageComProps) => {
-  const { control, error } = props;
+  const { control, error, isDetail } = props;
   const required = { required: { value: true, message: 'This field is requierd' } };
 
   return (
@@ -22,7 +22,7 @@ const AccessInfo = (props: CreateUserPageComProps) => {
       <Typography variant="h5" sx={{ color: 'white', marginLeft: '18px', marginTop: '8px' }}>
         Access information
       </Typography>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user" noWrap>
           Access level<span style={{ color: 'red' }}> *</span>
         </Typography>
@@ -33,7 +33,7 @@ const AccessInfo = (props: CreateUserPageComProps) => {
             rules={required}
             defaultValue={accessLevel[0].value}
             render={({ field }) => (
-              <select {...field} className="field_input">
+              <select {...field} disabled={isDetail} className="field_input">
                 {accessLevel.map((item) => {
                   return (
                     <option key={item.value} value={item.value}>
@@ -47,7 +47,7 @@ const AccessInfo = (props: CreateUserPageComProps) => {
           <Typography className="error_message">{error?.access_level ? error?.access_level?.message : ''}</Typography>
         </div>
       </div>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user" noWrap>
           Membership
         </Typography>
@@ -70,7 +70,7 @@ const AccessInfo = (props: CreateUserPageComProps) => {
           />
         </div>
       </div>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user">Require to change password on next log in</Typography>
         <div style={{ display: 'flex', flexDirection: 'column', width: '30%', marginLeft: '15px' }}>
           <Controller

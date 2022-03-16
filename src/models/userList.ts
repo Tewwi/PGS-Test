@@ -81,4 +81,16 @@ export interface newUser {
   taxExempt: number;
   paymentRailsType?: string;
   access_level: string;
+  companyName?: string;
+  income?: string;
+  expense?: string;
+  earning?: number;
+  order_as_buyer?: number;
+  order_as_buyer_total?: number;
+  products_total?: string;
+  default_card_id?: string;
+  language?: string;
+  joined?: string;
+  last_login?: string;
+  referer?: string;
 }

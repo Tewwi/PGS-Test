@@ -115,7 +115,7 @@ const TableItem = (props: Props) => {
         </TableCell>
         {isInputOpen ? (
           <>
-            <TableCell align="left" sx={{ color: 'white' }} onBlur={() => handleCloseInput()}>
+            <TableCell align="center" sx={{ color: 'white' }} onBlur={() => handleCloseInput()}>
               <div style={{ display: 'flex', backgroundColor: 'white', width: '70px', borderRadius: '3px' }}>
                 <div
                   style={{
@@ -145,7 +145,7 @@ const TableItem = (props: Props) => {
               </div>
             </TableCell>
             <TableCell
-              align="left"
+              align="center"
               style={{ minWidth: 50, maxWidth: 50, color: 'white', width: '70px' }}
               onBlur={() => handleCloseInput()}
             >
@@ -163,12 +163,12 @@ const TableItem = (props: Props) => {
           </>
         ) : (
           <>
-            <TableCell align="left" sx={{ color: 'white' }}>
+            <TableCell align="center" sx={{ color: 'white' }}>
               <Typography className="row_input" onClick={() => handleOpenInput()} sx={{ fontSize: '13px' }} noWrap>
                 ${Number(data.price).toFixed(2)}
               </Typography>
             </TableCell>
-            <TableCell align="left" style={{ minWidth: 50, maxWidth: 50, color: 'white' }}>
+            <TableCell align="center" style={{ minWidth: 50, maxWidth: 50, color: 'white' }}>
               <Typography className="row_input" onClick={() => handleOpenInput()} sx={{ fontSize: '13px' }} noWrap>
                 {data.amount}
               </Typography>

@@ -172,8 +172,8 @@ const AddProductPage = () => {
         backgroundColor: '#323259',
       }}
     >
-      <div style={{ padding: '16px', width: '100%' }}>
-        <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
+      <div style={{ padding: '16px', width: '100%', marginBottom: '30px' }}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
           <AddProduct rest={{ control: control, data: data, error: errors }} />
           <Price data={data} control={control} error={errors} />
           <Shipping

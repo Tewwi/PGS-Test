@@ -3,6 +3,7 @@ import { replace } from 'connected-react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -15,17 +16,39 @@ import { fetchThunk } from '../../common/redux/thunk';
 import { setToastInfo } from '../../layout/redux/layoutReducer';
 import AccessInfo from '../components/CreateUserPage/AccessInfo';
 import MainInfo from '../components/CreateUserPage/MainInfo';
-import Tax from '../components/CreateUserPage/Tax';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
+import Tax from '../components/CreateUserPage/Tax';
+import Loading from '../../layout/components/Loading';
+import InfoVendor from '../components/UserDetailPage/InfoVendor';
 
-const CreateUserPage = () => {
+const UserDetailPage = () => {
+  const { id } = useParams() as {
+    id: string;
+  };
+  const [dataDetail, setDataDetail] = React.useState<newUser>();
   const {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid },
-  } = useForm<newUser>({ mode: 'onChange' });
+  } = useForm<newUser>({ mode: 'onChange', defaultValues: dataDetail });
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
+  const [loading, setLoading] = React.useState(false);
+
+  const fetchUserDetail = React.useCallback(async () => {
+    setLoading(true);
+    const resp = await dispatch(fetchThunk(API_PATHS.getUserDetail, 'post', { id: id }));
+
+    setLoading(false);
+    if (resp.success) {
+      const data = resp.data.info;
+      setDataDetail(data);
+      return;
+    }
+    console.log('error');
+    return;
+  }, [dispatch, id]);
 
   const onSubmit = async (data: newUser) => {
     const resp = await dispatch(fetchThunk(API_PATHS.createUser, 'post', { ...data }));
@@ -40,6 +63,20 @@ const CreateUserPage = () => {
     dispatch(setToastInfo({ open: true, message: getErrorMessageResponse(resp), isSuccess: false }));
     return;
   };
+
+  React.useEffect(() => {
+    fetchUserDetail();
+  }, [fetchUserDetail]);
+
+  React.useEffect(() => {
+    if (dataDetail) {
+      reset(dataDetail);
+    }
+  }, [dataDetail, reset]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div
@@ -65,12 +102,13 @@ const CreateUserPage = () => {
                 <ArrowCircleLeftIcon fontSize="large" htmlColor="white" />
               </Link>
             </div>
-            <Typography variant="h5" sx={{ color: 'white', marginLeft: '18px', marginTop: '8px' }}>
-              Create User
+            <Typography variant="h5" sx={{ color: 'white', margin: '8px 0px 10px 18px' }}>
+              {`${dataDetail?.email} (${dataDetail?.companyName || ''})`}
             </Typography>
           </div>
-          <MainInfo control={control} error={errors} watch={watch} />
-          <AccessInfo control={control} error={errors} watch={watch} />
+          {dataDetail && <InfoVendor data={dataDetail} />}
+          <MainInfo control={control} error={errors} watch={watch} isDetail={true} />
+          <AccessInfo control={control} error={errors} watch={watch} isDetail={true} />
           <Tax control={control} error={errors} watch={watch} />
           <div
             style={{
@@ -106,7 +144,7 @@ const CreateUserPage = () => {
               }}
             >
               <Typography sx={{ fontSize: '13px' }} noWrap>
-                Create User
+                Update
               </Typography>
             </Button>
           </div>
@@ -116,4 +154,4 @@ const CreateUserPage = () => {
   );
 };
 
-export default CreateUserPage;
+export default UserDetailPage;

@@ -1,20 +1,19 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
-import { Link } from 'react-router-dom';
 import { Control, Controller, UseFormWatch } from 'react-hook-form';
 import { newUser } from '../../../../models/userList';
-import { paymentRailsType } from '../../util';
 import { validEmailRegex } from '../../../../utils';
+import { paymentRailsType } from '../../util';
 
 export interface CreateUserPageComProps {
   control: Control<newUser, any>;
   error?: any;
   watch: UseFormWatch<newUser>;
+  isDetail?: boolean;
 }
 
 const MainInfo = (props: CreateUserPageComProps) => {
-  const { control, error, watch } = props;
+  const { control, error, watch, isDetail } = props;
   const required = { required: { value: true, message: 'This field is requierd' } };
 
   return (
@@ -27,18 +26,10 @@ const MainInfo = (props: CreateUserPageComProps) => {
         paddingBottom: '20px',
       }}
     >
-      <div style={{ marginTop: '10px', marginLeft: '15px' }}>
-        <Link to={'/'}>
-          <ArrowCircleLeftIcon fontSize="large" htmlColor="white" />
-        </Link>
-      </div>
-      <Typography variant="h5" sx={{ color: 'white', marginLeft: '18px', marginTop: '8px' }}>
-        Add Product
-      </Typography>
       <Typography variant="h6" sx={{ color: 'white', marginLeft: '18px', marginTop: '8px' }}>
         {`Email ${'&'}  password`}
       </Typography>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user">
           First Name<span style={{ color: 'red' }}> *</span>
         </Typography>
@@ -53,7 +44,7 @@ const MainInfo = (props: CreateUserPageComProps) => {
           <Typography className="error_message">{error?.firstName ? error?.firstName?.message : ''}</Typography>
         </div>
       </div>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user">
           Last Name<span style={{ color: 'red' }}> *</span>
         </Typography>
@@ -68,7 +59,7 @@ const MainInfo = (props: CreateUserPageComProps) => {
           <Typography className="error_message">{error?.lastName ? error?.lastName?.message : ''}</Typography>
         </div>
       </div>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user">
           Email<span style={{ color: 'red' }}> *</span>
         </Typography>
@@ -86,7 +77,7 @@ const MainInfo = (props: CreateUserPageComProps) => {
           <Typography className="error_message">{error?.email ? error?.email?.message : ''}</Typography>
         </div>
       </div>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user">
           Password<span style={{ color: 'red' }}> *</span>
         </Typography>
@@ -104,7 +95,7 @@ const MainInfo = (props: CreateUserPageComProps) => {
           <Typography className="error_message">{error?.password ? error?.password?.message : ''}</Typography>
         </div>
       </div>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user" noWrap>
           Confirm Password<span style={{ color: 'red' }}> *</span>
         </Typography>
@@ -124,30 +115,32 @@ const MainInfo = (props: CreateUserPageComProps) => {
           </Typography>
         </div>
       </div>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user" noWrap>
           Type
         </Typography>
-        <div style={{ display: 'flex', flexDirection: 'column', width: '30%', marginLeft: '15px' }}>
-          <Controller
-            control={control}
-            name="paymentRailsType"
-            defaultValue={paymentRailsType[0]}
-            render={({ field }) => (
-              <select {...field} className="field_input">
-                {paymentRailsType.map((item) => {
-                  return (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  );
-                })}
-              </select>
-            )}
-          />
-        </div>
+        {!isDetail ? (
+          <div style={{ display: 'flex', flexDirection: 'column', width: '30%', marginLeft: '15px' }}>
+            <Controller
+              control={control}
+              name="paymentRailsType"
+              defaultValue={paymentRailsType[0]}
+              render={({ field }) => (
+                <select {...field} className="field_input">
+                  {paymentRailsType.map((item) => {
+                    return (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    );
+                  })}
+                </select>
+              )}
+            />
+          </div>
+        ) : null}
       </div>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user" noWrap>
           PaymentRails ID
         </Typography>

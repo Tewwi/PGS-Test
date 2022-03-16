@@ -19,7 +19,7 @@ const Tax = (props: CreateUserPageComProps) => {
       <Typography variant="h5" sx={{ color: 'white', marginLeft: '18px', marginTop: '8px' }}>
         Tax information
       </Typography>
-      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 0' }}>
+      <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user">Tax exempt</Typography>
         <div style={{ display: 'flex', flexDirection: 'column', width: '30%', marginLeft: '15px' }}>
           <Controller

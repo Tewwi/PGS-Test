@@ -4,6 +4,7 @@ import React from 'react';
 import { UserTableInfo } from '../../../../models/userList';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
+import { ROUTES } from '../../../../configs/routes';
 
 interface Props {
   data: UserTableInfo;
@@ -33,7 +34,7 @@ const UserListItem = (props: Props) => {
       <TableCell align="left" padding="normal" sx={{ color: 'white' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <p className="link-text">
-            <Link to={'/'}>{data.vendor}</Link>
+            <Link to={`${ROUTES.userDetail}/${data.profile_id}`}>{data.vendor}</Link>
           </p>
           <p>{data.storeName}</p>
         </div>

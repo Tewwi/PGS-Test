@@ -3,6 +3,7 @@ import { APIHost } from '../utils/constants';
 enum APIService {
   auth,
   public,
+  vendor,
 }
 
 function getBaseUrl(service: APIService) {
@@ -10,6 +11,8 @@ function getBaseUrl(service: APIService) {
     return `${APIHost}/apiAdmin`;
   } else if (service === APIService.public) {
     return `${APIHost}/api`;
+  } else if (service === APIService.vendor) {
+    return `${APIHost}/apiVendor`;
   }
   return '';
 }
@@ -32,4 +35,5 @@ export const API_PATHS = {
   editUser: `${getBaseUrl(APIService.auth)}/users/edit`,
   createUser: `${getBaseUrl(APIService.auth)}/users/create`,
   uploadImg: `${getBaseUrl(APIService.public)}/products/upload-image`,
+  getUserDetail: `${getBaseUrl(APIService.vendor)}/profile/detail`,
 };

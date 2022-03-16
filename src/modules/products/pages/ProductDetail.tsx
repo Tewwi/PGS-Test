@@ -225,8 +225,8 @@ const ProductDetail = () => {
         backgroundColor: '#323259',
       }}
     >
-      <div style={{ padding: '16px', width: '100%' }}>
-        <form onSubmit={handleSubmit(onSubmit)} style={{ margin: '5px', width: '100%' }}>
+      <div style={{ padding: '16px', width: '100%', marginBottom: '30px' }}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
           <AddProduct
             rest={{ control: control, data: dataField, error: errors, defaultValue: dataDetail }}
             handleDeleImg={handleDeleImg}
@@ -273,7 +273,7 @@ const ProductDetail = () => {
               }}
             >
               <Typography sx={{ fontSize: '13px' }} noWrap>
-                Upadte Product
+                Update Product
               </Typography>
             </Button>
           </div>

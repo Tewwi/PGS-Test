@@ -112,7 +112,7 @@ const NavBar: FC<Props> = ({ children }) => {
         </div>
         {toast && (
           <Snackbar
-            autoHideDuration={5000}
+            autoHideDuration={4000}
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             open={toast.open}
             onClose={() => dispatch(setToastInfo({ ...toast, open: false }))}

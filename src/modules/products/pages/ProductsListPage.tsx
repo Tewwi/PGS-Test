@@ -257,6 +257,7 @@ const ProductsListPage = () => {
                     backgroundColor: '#b18aff',
                     color: 'black',
                   },
+                  textTransform: 'none',
                 }}
                 onClick={() => {
                   dispatch(replace(ROUTES.addProduct));
