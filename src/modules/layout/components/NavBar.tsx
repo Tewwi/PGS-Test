@@ -1,7 +1,7 @@
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
+import { Alert, AppBar, IconButton, Menu, MenuItem, Snackbar, Toolbar, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import Cookies from 'js-cookie';
 import React, { FC } from 'react';
@@ -9,12 +9,13 @@ import { useLocation } from 'react-router';
 import { ROUTES } from '../../../configs/routes';
 import SideBar from './SideBar';
 import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from '../../../redux/reducer';
 import { Action } from 'typesafe-actions';
 import { replace } from 'connected-react-router';
 import { logOutUser } from '../../auth/redux/authReducer';
+import { setToastInfo } from '../redux/layoutReducer';
 
 interface Props {}
 
@@ -31,6 +32,7 @@ const NavBar: FC<Props> = ({ children }) => {
     }
     return;
   };
+  const toast = useSelector((state: AppState) => state.toast.toast);
 
   React.useEffect(() => {
     if (location.pathname === ROUTES.login) {
@@ -108,6 +110,23 @@ const NavBar: FC<Props> = ({ children }) => {
           />
           <div style={{ flex: '1' }}>{children}</div>
         </div>
+        {toast && (
+          <Snackbar
+            autoHideDuration={5000}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            open={toast.open}
+            onClose={() => dispatch(setToastInfo({ ...toast, open: false }))}
+            key={toast.message}
+          >
+            <Alert
+              onClose={() => dispatch(setToastInfo({ ...toast, open: false }))}
+              severity={toast.isSuccess ? 'success' : 'error'}
+              sx={{ width: '100%' }}
+            >
+              {toast.message}
+            </Alert>
+          </Snackbar>
+        )}
       </Box>
     );
   }

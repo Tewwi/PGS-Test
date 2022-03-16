@@ -1,4 +1,6 @@
+import { Button, Typography } from '@mui/material';
 import axios from 'axios';
+import { replace } from 'connected-react-router';
 import dayjs from 'dayjs';
 import { convertFromHTML, convertToHTML } from 'draft-convert';
 import { EditorState } from 'draft-js';
@@ -13,17 +15,17 @@ import { API_PATHS } from '../../../configs/api';
 import { ROUTES } from '../../../configs/routes';
 import { IShipping, ProductCreateParam } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
+import { getErrorMessageResponse } from '../../../utils';
 import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
-import Loading from '../../common/components/Loading';
 import { fetchThunk } from '../../common/redux/thunk';
+import Loading from '../../layout/components/Loading';
+import { setToastInfo } from '../../layout/redux/layoutReducer';
 import AddProduct from '../components/AddProductPage/AddProduct';
 import Marketing from '../components/AddProductPage/Marketing';
 import Price from '../components/AddProductPage/Price';
 import Shipping from '../components/AddProductPage/Shipping';
-import { fieldData } from './AddProductPage';
-import { Button, Typography } from '@mui/material';
-import { replace } from 'connected-react-router';
 import { concatImgOrder } from '../utils';
+import { fieldData } from './AddProductPage';
 
 const ProductDetail = () => {
   const { id } = useParams() as {
@@ -183,11 +185,12 @@ const ProductDetail = () => {
           console.log(tempResult);
         }
 
+        dispatch(setToastInfo({ open: true, message: 'Update product success', isSuccess: true }));
         dispatch(replace(`${ROUTES.productDetail}/${json.data.data}`));
         return;
       }
 
-      console.log('error');
+      dispatch(setToastInfo({ open: true, message: getErrorMessageResponse(json), isSuccess: false }));
       return;
     },
     [dispatch, deleItemIndex, dataDetail?.images],
@@ -216,7 +219,7 @@ const ProductDetail = () => {
   return (
     <div
       style={{
-        width: '100vw',
+        width: '100%',
         minHeight: '100vh',
         height: '100%',
         backgroundColor: '#323259',

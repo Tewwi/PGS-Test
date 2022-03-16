@@ -1,19 +1,20 @@
 import { Button, Typography } from '@mui/material';
+import { replace } from 'connected-react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { newUser } from '../../../models/userList';
-import AccessInfo from '../components/CreateUserPage/AccessInfo';
-import MainInfo from '../components/CreateUserPage/MainInfo';
-import Tax from '../components/CreateUserPage/Tax';
 import { useDispatch } from 'react-redux';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { API_PATHS } from '../../../configs/api';
-import { AppState } from '../../../redux/reducer';
-import { fetchThunk } from '../../common/redux/thunk';
-import { replace } from 'connected-react-router';
 import { ROUTES } from '../../../configs/routes';
+import { newUser } from '../../../models/userList';
+import { AppState } from '../../../redux/reducer';
 import { getErrorMessageResponse } from '../../../utils';
+import { fetchThunk } from '../../common/redux/thunk';
+import { setToastInfo } from '../../layout/redux/layoutReducer';
+import AccessInfo from '../components/CreateUserPage/AccessInfo';
+import MainInfo from '../components/CreateUserPage/MainInfo';
+import Tax from '../components/CreateUserPage/Tax';
 
 const CreateUserPage = () => {
   const {
@@ -22,7 +23,6 @@ const CreateUserPage = () => {
     watch,
     formState: { errors, isValid },
   } = useForm<newUser>({ mode: 'onChange' });
-  const [errorMessage, setErrorMessage] = React.useState();
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
 
   const onSubmit = async (data: newUser) => {
@@ -30,18 +30,19 @@ const CreateUserPage = () => {
 
     console.log(resp);
     if (resp.success) {
+      dispatch(setToastInfo({ open: true, message: 'Create user success', isSuccess: true }));
       dispatch(replace(ROUTES.userList));
       return;
     }
 
-    setErrorMessage(getErrorMessageResponse(resp));
+    dispatch(setToastInfo({ open: true, message: getErrorMessageResponse(resp), isSuccess: false }));
     return;
   };
 
   return (
     <div
       style={{
-        width: '100vw',
+        width: '100%',
         minHeight: '100vh',
         height: '100%',
         backgroundColor: '#323259',

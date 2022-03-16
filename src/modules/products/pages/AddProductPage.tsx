@@ -12,9 +12,11 @@ import { API_PATHS } from '../../../configs/api';
 import { ROUTES } from '../../../configs/routes';
 import { Brand, Catagory, Condition, IShipping, ProductCreateParam, Vendor } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
+import { getErrorMessageResponse } from '../../../utils';
 import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
-import Loading from '../../common/components/Loading';
 import { fetchThunk } from '../../common/redux/thunk';
+import Loading from '../../layout/components/Loading';
+import { setToastInfo } from '../../layout/redux/layoutReducer';
 import AddProduct from '../components/AddProductPage/AddProduct';
 import Marketing from '../components/AddProductPage/Marketing';
 import Price from '../components/AddProductPage/Price';
@@ -71,13 +73,13 @@ const AddProductPage = () => {
     console.log({
       ...data,
       description: convertToHTML(data.description.getCurrentContent()),
-      imagesOrder: data.images.map((item: any) => item[0].name),
+      imagesOrder: data?.imgUpload?.map((item: any) => item[0].name),
     });
     const body = {
       ...data,
       description: convertToHTML(data.description.getCurrentContent()),
       vendor_id: data.vendor_id.id,
-      imagesOrder: data.images.map((item: any) => item[0].name),
+      imagesOrder: data?.imgUpload?.map((item: any) => item[0].name),
     };
     const config = {
       headers: {
@@ -107,11 +109,12 @@ const AddProductPage = () => {
         console.log(tempResult);
       }
 
+      dispatch(setToastInfo({ open: true, message: 'Create product success', isSuccess: true }));
       dispatch(replace(`${ROUTES.productDetail}/${json.data.data}`));
       return;
     }
 
-    console.log('error');
+    dispatch(setToastInfo({ open: true, message: getErrorMessageResponse(json), isSuccess: false }));
     return;
   };
 
@@ -163,7 +166,7 @@ const AddProductPage = () => {
   return (
     <div
       style={{
-        width: '100vw',
+        width: '100%',
         minHeight: '100vh',
         height: '100%',
         backgroundColor: '#323259',

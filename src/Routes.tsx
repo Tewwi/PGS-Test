@@ -1,8 +1,8 @@
 import React, { lazy, Suspense } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { ROUTES } from './configs/routes';
-import Loading from './modules/common/components/Loading';
-import NavBar from './modules/common/components/NavBar';
+import Loading from './modules/layout/components/Loading';
+import NavBar from './modules/layout/components/NavBar';
 import ProtectedRoute from './modules/common/components/ProtectedRoute';
 
 const HomePage = lazy(() => import('./modules/home/pages/HomePage'));
