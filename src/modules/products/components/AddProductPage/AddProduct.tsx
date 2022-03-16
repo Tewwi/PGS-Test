@@ -7,7 +7,7 @@ import { Control, Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { ProductCreateParam } from '../../../../models/product';
 import { fieldData } from '../../pages/AddProductPage';
-import { MenuProps } from '../../utils';
+import { MenuProps, required } from '../../utils';
 import DropInput from './DropInput';
 
 export interface AddPageComProps {
@@ -24,7 +24,6 @@ interface Props {
 
 const AddProduct = (props: Props) => {
   const { control, data, error, defaultValue } = props.rest;
-  const required = { required: { value: true, message: 'This field is requierd' } };
 
   return (
     <div
@@ -53,7 +52,7 @@ const AddProduct = (props: Props) => {
           <Controller
             control={control}
             name="vendor_id"
-            rules={required}
+            rules={required('Vendor')}
             render={({ field: { onChange, value, ...props } }) => (
               <>
                 <Autocomplete
@@ -92,7 +91,7 @@ const AddProduct = (props: Props) => {
         <div style={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
           <Controller
             control={control}
-            rules={required}
+            rules={required('Product Title')}
             name="name"
             defaultValue={''}
             render={({ field }) => <input {...field} type="text" className="field_input" />}
@@ -110,12 +109,11 @@ const AddProduct = (props: Props) => {
         <div style={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
           <Controller
             control={control}
-            rules={required}
+            rules={required('Brand')}
             name="brand_id"
             defaultValue={''}
             render={({ field: { value, ...props } }) => (
               <select value={value} {...props} className="field_input">
-                <option value={'0'}></option>
                 {data?.brand?.map((item) => {
                   return (
                     <option key={item.id} value={item.id?.toString()}>
@@ -139,12 +137,11 @@ const AddProduct = (props: Props) => {
         <div style={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
           <Controller
             control={control}
-            rules={required}
+            rules={required('Condition')}
             name="condition_id"
             defaultValue={''}
             render={({ field: { value, ...props } }) => (
               <select value={value} {...props} className="field_input">
-                <option value=""></option>
                 {data?.condition?.map((item, index) => {
                   return (
                     <option key={index} value={item.id?.toString()}>
@@ -200,7 +197,7 @@ const AddProduct = (props: Props) => {
         <div style={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
           <Controller
             control={control}
-            rules={required}
+            rules={required('Catagory')}
             name="categories"
             defaultValue={[]}
             render={({ field: { value, ...props } }) => (
@@ -240,7 +237,7 @@ const AddProduct = (props: Props) => {
         <div style={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
           <Controller
             name="description"
-            rules={required}
+            rules={required('Description')}
             control={control}
             defaultValue={''}
             render={({ field: { onChange, value } }) => {

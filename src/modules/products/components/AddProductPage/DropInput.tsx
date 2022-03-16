@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { Control, Controller } from 'react-hook-form';
 import { ProductCreateParam } from '../../../../models/product';
+import { required } from '../../utils';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -34,7 +35,6 @@ const DropInput = (props: Props) => {
   const [images, setImages] = useState<any[]>([]);
   const [imgId, setImgId] = useState<number[]>([]);
   const [valueUpload, setValueUpload] = useState<any[]>([]);
-  const required = { required: { value: true, message: 'This field is requierd' } };
   const styles = useStyles();
 
   const handlePrevImg = (value: File[]) => {
@@ -83,7 +83,7 @@ const DropInput = (props: Props) => {
         control={control}
         name={nameInput}
         defaultValue={images}
-        rules={dataDefault ? {} : required}
+        rules={dataDefault ? {} : required('Image')}
         render={({ field: { onChange, onBlur, value } }) => (
           <>
             <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>

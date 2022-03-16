@@ -1,13 +1,12 @@
 import { Checkbox, FormControlLabel, FormGroup, MenuItem, OutlinedInput, Select, Typography } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { memberships, MenuProps, sale_unit } from '../../utils';
+import { memberships, MenuProps, required, sale_unit } from '../../utils';
 import { AddPageComProps } from './AddProduct';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const Price = (props: AddPageComProps) => {
   const { control, error } = props;
-  const required = { required: { value: true, message: 'This field is requierd' } };
   const [isSale, setIsSale] = React.useState(false);
 
   return (
@@ -117,7 +116,7 @@ const Price = (props: AddPageComProps) => {
               <Controller
                 control={control}
                 name="price"
-                rules={required}
+                rules={required('Price')}
                 defaultValue={''}
                 render={({ field: { value, ...props } }) => (
                   <input value={value} {...props} type="number" className="field_input" />
@@ -212,7 +211,7 @@ const Price = (props: AddPageComProps) => {
           <Controller
             control={control}
             name="quantity"
-            rules={required}
+            rules={required('Quantity in stock')}
             defaultValue={''}
             render={({ field: { value, ...props } }) => (
               <input value={value} {...props} type="number" className="field_input" />

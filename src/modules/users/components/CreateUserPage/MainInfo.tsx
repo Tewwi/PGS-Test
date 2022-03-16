@@ -126,7 +126,7 @@ const MainInfo = (props: CreateUserPageComProps) => {
               name="paymentRailsType"
               defaultValue={paymentRailsType[0]}
               render={({ field }) => (
-                <select {...field} className="field_input">
+                <select {...field} style={{ textTransform: 'capitalize' }} className="field_input">
                   {paymentRailsType.map((item) => {
                     return (
                       <option key={item} value={item}>

@@ -59,7 +59,7 @@ const UserFilter = (props: Props) => {
   };
 
   const onSubmit = (data: FilterParam) => {
-    // console.log(data);
+    console.log(data);
     props.handleFilter(data);
   };
 
