@@ -177,9 +177,11 @@ const TableItem = (props: Props) => {
         )}
 
         <TableCell align="left" style={{ minWidth: 110, maxWidth: 110, color: 'white' }}>
-          <Typography sx={{ fontSize: '13px' }} noWrap>
-            {data.vendor}
-          </Typography>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography className="link-text" noWrap>
+              <Link to={`${ROUTES.userDetail}/${data.vendorID}`}>{data.vendor}</Link>
+            </Typography>
+          </div>
         </TableCell>
         <TableCell align="left" style={{ minWidth: 20, maxWidth: 20, color: 'white' }}>
           <Typography sx={{ fontSize: '13px' }} noWrap>

@@ -16,6 +16,7 @@ export interface Product {
   category: string;
   vendor: string;
   amount: string;
+  vendorID: string;
   enabled?: string;
   checked?: boolean;
   isDele?: boolean;

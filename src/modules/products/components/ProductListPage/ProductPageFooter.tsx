@@ -15,6 +15,7 @@ interface Props {
   handleSaveBtn(): void;
   handleRemovebtn(): void;
   data?: Product[];
+  isSelected: boolean;
 }
 
 const headerCSV = tableHeaderLabel.map((item) => {
@@ -22,7 +23,7 @@ const headerCSV = tableHeaderLabel.map((item) => {
 });
 
 const ProductPageFooter = (props: Props) => {
-  const { btnInfo, handleSaveBtn, handleRemovebtn, data } = props;
+  const { btnInfo, handleSaveBtn, handleRemovebtn, data, isSelected } = props;
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [dataExport, setDataExport] = React.useState<any>([]);
 
@@ -101,7 +102,7 @@ const ProductPageFooter = (props: Props) => {
             filename="ProductTable"
           >
             <Typography sx={{ fontSize: '13px' }} noWrap>
-              Export All:CSV
+              {isSelected ? 'Export Select:CSV' : 'Export All:CSV'}
             </Typography>
           </CSVLink>
         ) : null}

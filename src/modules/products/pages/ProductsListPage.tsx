@@ -47,6 +47,7 @@ const ProductsListPage = () => {
   const [totalItem, setTotalItem] = useState(1000);
   const [itemChange, setItemChange] = useState<ProductItem[]>([]);
   const [deleItem, setDeleItem] = useState<object[]>([]);
+  const [selectItem, setSelectItem] = useState<Product[]>();
   const [btnInfo, setBtnInfo] = useState({
     disable: true,
     isDele: false,
@@ -229,6 +230,15 @@ const ProductsListPage = () => {
   }, [tableData]);
 
   useEffect(() => {
+    if (!tableData) return;
+    const temp = tableData?.filter((item) => item.checked);
+
+    if (temp && temp.length > 0) {
+      setSelectItem(temp);
+    } else setSelectItem([]);
+  }, [tableData]);
+
+  useEffect(() => {
     if (deleItem.length > 0) {
       setBtnInfo({ disable: false, text: 'Remove selected', isDele: true });
     } else if (itemChange.length > 0) {
@@ -290,10 +300,11 @@ const ProductsListPage = () => {
           />
         </div>
         <ProductPageFooter
-          data={tableData}
+          data={selectItem && selectItem.length > 0 ? selectItem : tableData}
           btnInfo={btnInfo}
           handleSaveBtn={handleSaveBtn}
           handleRemovebtn={handleRemovebtn}
+          isSelected={!!(selectItem && selectItem.length > 0)}
         />
       </div>
     </>
