@@ -50,7 +50,8 @@ const UserDetailPage = () => {
   }, [dispatch, id]);
 
   const onSubmit = async (data: newUser) => {
-    const resp = await dispatch(fetchThunk(API_PATHS.updateUser, 'post', { ...data }));
+    const body = { params: [data] };
+    const resp = await dispatch(fetchThunk(API_PATHS.updateUser, 'post', body));
 
     console.log(resp);
     if (resp.success) {

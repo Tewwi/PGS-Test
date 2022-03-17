@@ -93,5 +93,9 @@ export interface newUser {
   joined?: string;
   last_login?: string;
   referer?: string;
+  paymentRailsId?: string;
+  pending_membership_id?: string | null;
+  status?: string;
+  statusComment?: string;
   roles?: string[];
 }

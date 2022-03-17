@@ -6,8 +6,8 @@ export const getErrorMessageResponse = (response: any) => {
     return response?.errors;
   }
 
-  if (response?.errors?.email[0] || response?.errors?.password[0]) {
-    return response?.errors?.email;
+  if (response?.errors?.params) {
+    return response?.errors?.params;
   }
 
   return '';

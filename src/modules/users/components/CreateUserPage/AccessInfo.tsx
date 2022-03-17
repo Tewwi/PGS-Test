@@ -1,4 +1,4 @@
-import { Checkbox, Select, Typography, Input, MenuItem, ListItemText } from '@mui/material';
+import { Checkbox, Select, Typography, Input, MenuItem, ListItemText, TextareaAutosize } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -9,7 +9,7 @@ import { RoleInfo } from '../../../../models/userList';
 import { AppState } from '../../../../redux/reducer';
 import { fetchThunk } from '../../../common/redux/thunk';
 import { MenuProps, required } from '../../../products/utils';
-import { accessLevel, membershipsUser } from '../../util';
+import { accessLevel, membershipsUser, userStatus } from '../../util';
 import { CreateUserPageComProps } from './MainInfo';
 
 const AccessInfo = (props: CreateUserPageComProps) => {
@@ -93,7 +93,6 @@ const AccessInfo = (props: CreateUserPageComProps) => {
                   }}
                   value={value}
                   {...props}
-                  // disabled={isDetail}
                   className="field_input"
                 >
                   {accessLevel.map((item) => {
@@ -159,6 +158,48 @@ const AccessInfo = (props: CreateUserPageComProps) => {
           </div>
         </div>
       )}
+      {isDetail && (
+        <>
+          <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
+            <Typography className="label_input_add_user" noWrap>
+              Account status<span style={{ color: 'red' }}> *</span>
+            </Typography>
+            <div style={{ display: 'flex', flexDirection: 'column', width: '30%', marginLeft: '15px' }}>
+              <Controller
+                control={control}
+                defaultValue={''}
+                name="status"
+                render={({ field }) => (
+                  <select {...field} className="field_input">
+                    {userStatus.map((item) => {
+                      return (
+                        <option key={item.value} value={item.value || ''}>
+                          {item.label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                )}
+              />
+            </div>
+          </div>
+          <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
+            <Typography className="label_input_add_user" style={{ alignSelf: 'auto' }} noWrap>
+              Status comment (reason)
+            </Typography>
+            <div style={{ display: 'flex', flexDirection: 'column', width: '50%', marginLeft: '15px' }}>
+              <Controller
+                control={control}
+                defaultValue={''}
+                name="statusComment"
+                render={({ field }) => (
+                  <TextareaAutosize minRows={2} {...field} aria-label="empty textarea" className="field_input" />
+                )}
+              />
+            </div>
+          </div>
+        </>
+      )}
       <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user" noWrap>
           Membership
@@ -182,6 +223,22 @@ const AccessInfo = (props: CreateUserPageComProps) => {
           />
         </div>
       </div>
+      {isDetail && (
+        <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
+          <Typography className="label_input_add_user" noWrap>
+            Pending membership
+          </Typography>
+          <div style={{ display: 'flex', flexDirection: 'column', width: '30%', marginLeft: '15px' }}>
+            <Controller
+              control={control}
+              name="pending_membership_id"
+              render={({ field: { value } }) => {
+                return <p style={{ color: 'white' }}>{value || 'none'}</p>;
+              }}
+            />
+          </div>
+        </div>
+      )}
       <div style={{ display: 'flex', width: '70vw', margin: '20px auto auto 30px' }}>
         <Typography className="label_input_add_user">Require to change password on next log in</Typography>
         <div style={{ display: 'flex', flexDirection: 'column', width: '30%', marginLeft: '15px' }}>

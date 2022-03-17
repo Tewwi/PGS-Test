@@ -153,6 +153,15 @@ const MainInfo = (props: CreateUserPageComProps) => {
         <Typography className="label_input_add_user" noWrap>
           PaymentRails ID
         </Typography>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '30%', marginLeft: '15px' }}>
+          <Controller
+            control={control}
+            name="paymentRailsId"
+            render={({ field: { value } }) => {
+              return <p style={{ color: 'white' }}>{value}</p>;
+            }}
+          />
+        </div>
       </div>
     </div>
   );
