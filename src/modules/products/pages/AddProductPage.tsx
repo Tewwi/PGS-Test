@@ -70,6 +70,7 @@ const AddProductPage = () => {
   );
 
   const onSubmit = async (data: ProductCreateParam) => {
+    setLoading(true);
     console.log({
       ...data,
       description: convertToHTML(data.description.getCurrentContent()),
@@ -109,11 +110,13 @@ const AddProductPage = () => {
         console.log(tempResult);
       }
 
+      setLoading(false);
       dispatch(setToastInfo({ open: true, message: 'Create product success', isSuccess: true }));
       dispatch(replace(`${ROUTES.productDetail}/${json.data.data}`));
       return;
     }
 
+    setLoading(false);
     dispatch(setToastInfo({ open: true, message: getErrorMessageResponse(json), isSuccess: false }));
     return;
   };

@@ -63,6 +63,7 @@ export interface IShipping {
   id: string;
   name?: string;
   price: string;
+  zone_name?: string;
 }
 
 export interface ProductCreateParam {

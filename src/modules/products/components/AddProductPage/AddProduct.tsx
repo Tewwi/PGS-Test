@@ -142,6 +142,7 @@ const AddProduct = (props: Props) => {
             defaultValue={''}
             render={({ field: { value, ...props } }) => (
               <select value={value} {...props} className="field_input">
+                <option value={''}></option>
                 {data?.condition?.map((item, index) => {
                   return (
                     <option key={index} value={item.id?.toString()}>

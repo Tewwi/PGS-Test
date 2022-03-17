@@ -36,7 +36,7 @@ const Shipping = (props: Props) => {
               sx={{ fontSize: '16px', color: 'white', marginRight: '15px', alignSelf: 'center', width: '15%' }}
               noWrap
             >
-              {item.name}
+              {item.name ? item.name : item.zone_name}
               {index === 0 && <span style={{ color: 'red' }}> *</span>}
             </Typography>
             <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
@@ -103,6 +103,7 @@ const Shipping = (props: Props) => {
             style={{ width: '40%', margin: 'auto', cursor: 'pointer' }}
             onClick={() => {
               if (data?.shipping) {
+                if (shippingLocationIndex === 0) return;
                 props.handleAddShipping(data?.shipping[shippingLocationIndex]);
               }
             }}
