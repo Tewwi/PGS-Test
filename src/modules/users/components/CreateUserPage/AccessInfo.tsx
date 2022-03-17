@@ -31,7 +31,7 @@ const AccessInfo = (props: CreateUserPageComProps) => {
             control={control}
             name="access_level"
             rules={required}
-            defaultValue={accessLevel[0].value}
+            defaultValue={accessLevel[1].value}
             render={({ field }) => (
               <select {...field} disabled={isDetail} className="field_input">
                 {accessLevel.map((item) => {

@@ -123,14 +123,19 @@ const UserListPage = () => {
     const body = selectItem?.map((item) => {
       return { id: item.profile_id, delete: 1 };
     });
+
+    setLoading(false);
+
     const resp = await dispatch(fetchThunk(API_PATHS.editUser, 'post', { params: body }));
-    if (resp.susuccess) {
-      console.log('susuccess');
+    if (resp.success) {
+      console.log('success');
+      fetchUsersData();
       return;
     }
+
     console.log('error');
     return;
-  }, [dispatch, selectItem]);
+  }, [dispatch, selectItem, fetchUsersData]);
 
   useEffect(() => {
     if (usersData && usersData.length > 0) {

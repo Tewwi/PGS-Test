@@ -76,12 +76,12 @@ export const tableHeaderLabel = [
 
 export const accessLevel = [
   {
-    label: 'Vendor',
-    value: '10',
-  },
-  {
     label: 'Admin',
     value: '100',
+  },
+  {
+    label: 'Vendor',
+    value: '10',
   },
 ];
 export const paymentRailsType = ['individual', 'business'];

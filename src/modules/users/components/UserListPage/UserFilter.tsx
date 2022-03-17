@@ -50,16 +50,15 @@ const UserFilter = (props: Props) => {
       const temp = obj[key].filter((item: any) => {
         return value.indexOf(item[`${keyId}`]) > -1;
       });
-      if (temp[0]) {
-        return temp[0][`${fieldName}`];
-      }
-      return;
+
+      return temp.map((item: any) => item[`${fieldName}`]);
     });
+
     return result.filter((item) => item);
   };
 
   const onSubmit = (data: FilterParam) => {
-    console.log(data);
+    // console.log(data);
     props.handleFilter(data);
   };
 
@@ -83,7 +82,7 @@ const UserFilter = (props: Props) => {
               name="search"
               control={control}
               defaultValue=""
-              render={({ field }) => <input {...field} className="field_input_user" />}
+              render={({ field }) => <input {...field} placeholder="Search keywords" className="field_input_user" />}
             />
           </Grid>
           <Grid item xs={3} className="aaa">
@@ -97,8 +96,12 @@ const UserFilter = (props: Props) => {
                   value={value}
                   multiple
                   className="filter_dropdown"
+                  displayEmpty
                   input={<Input className="field_input_user" />}
-                  renderValue={() => handleRenderSelectValue(memberships, value, 'label', 'value').join(', ')}
+                  renderValue={(select) => {
+                    if (select.length === 0) return <p>All memberships</p>;
+                    return handleRenderSelectValue(memberships, value, 'label', 'value').join(', ');
+                  }}
                   MenuProps={MenuProps}
                 >
                   {(Object.keys(memberships) as Array<keyof typeof memberships>).map((key, index) => (
@@ -133,10 +136,14 @@ const UserFilter = (props: Props) => {
               render={({ field: { value, onChange, ...props } }) => (
                 <Select
                   {...props}
+                  displayEmpty
                   value={value}
                   multiple
                   input={<Input placeholder="All user types" className="field_input_user" />}
-                  renderValue={() => handleRenderSelectValue(role, value, 'name', 'id').join(', ')}
+                  renderValue={(select) => {
+                    if (select.length === 0) return <p>All user type</p>;
+                    return handleRenderSelectValue(role, value, 'name', 'id').join(', ');
+                  }}
                   MenuProps={MenuProps}
                 >
                   {role &&

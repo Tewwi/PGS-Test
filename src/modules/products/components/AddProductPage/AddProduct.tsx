@@ -1,5 +1,5 @@
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
-import { Autocomplete, MenuItem, OutlinedInput, Select, Switch, Typography } from '@mui/material';
+import { Autocomplete, Input, MenuItem, Select, Switch, Typography } from '@mui/material';
 import React from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -185,7 +185,7 @@ const AddProduct = (props: Props) => {
           dataDefault={defaultValue}
           handleDeleImg={props.handleDeleImg}
         />
-        <Typography className="error_message">{error ? error?.image?.message : ''}</Typography>
+        <Typography className="error_message">{error?.imgUpload ? error?.imgUpload?.message : ''}</Typography>
       </div>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
         <Typography
@@ -206,7 +206,7 @@ const AddProduct = (props: Props) => {
                 multiple
                 value={value ?? ''}
                 input={
-                  <OutlinedInput
+                  <Input
                     className="field_input"
                     style={{
                       maxHeight: '42px',
