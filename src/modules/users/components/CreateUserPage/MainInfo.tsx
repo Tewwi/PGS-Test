@@ -14,6 +14,7 @@ export interface CreateUserPageComProps {
 
 const MainInfo = (props: CreateUserPageComProps) => {
   const { control, error, watch, isDetail } = props;
+  console.log(isDetail);
   const required = { required: { value: true, message: 'This field is requierd' } };
 
   return (
@@ -86,10 +87,14 @@ const MainInfo = (props: CreateUserPageComProps) => {
             control={control}
             name="password"
             defaultValue={''}
-            rules={{
-              required: { value: true, message: 'This field is requierd' },
-              minLength: { value: 6, message: 'Password must have at least 6 characters' },
-            }}
+            rules={
+              !isDetail
+                ? {
+                    required: { value: true, message: 'This field is requierd' },
+                    minLength: { value: 6, message: 'Password must have at least 6 characters' },
+                  }
+                : { minLength: { value: 6, message: 'Password must have at least 6 characters' } }
+            }
             render={({ field }) => <input {...field} className="field_input" type="password" />}
           />
           <Typography className="error_message">{error?.password ? error?.password?.message : ''}</Typography>
@@ -104,10 +109,14 @@ const MainInfo = (props: CreateUserPageComProps) => {
             control={control}
             name="confirm_password"
             defaultValue={''}
-            rules={{
-              required: { value: true, message: 'This field is requierd' },
-              validate: { value: (value) => value === watch('password') || 'The passwords do not match' },
-            }}
+            rules={
+              !isDetail
+                ? {
+                    required: { value: true, message: 'This field is requierd' },
+                    validate: { value: (value) => value === watch('password') || 'The passwords do not match' },
+                  }
+                : { validate: { value: (value) => value === watch('password') || 'The passwords do not match' } }
+            }
             render={({ field }) => <input {...field} className="field_input" type="password" />}
           />
           <Typography className="error_message">

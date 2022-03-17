@@ -1,5 +1,5 @@
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import { Button, Typography } from '@mui/material';
-import { replace } from 'connected-react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -13,12 +13,11 @@ import { newUser } from '../../../models/userList';
 import { AppState } from '../../../redux/reducer';
 import { getErrorMessageResponse } from '../../../utils';
 import { fetchThunk } from '../../common/redux/thunk';
+import Loading from '../../layout/components/Loading';
 import { setToastInfo } from '../../layout/redux/layoutReducer';
 import AccessInfo from '../components/CreateUserPage/AccessInfo';
 import MainInfo from '../components/CreateUserPage/MainInfo';
-import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import Tax from '../components/CreateUserPage/Tax';
-import Loading from '../../layout/components/Loading';
 import InfoVendor from '../components/UserDetailPage/InfoVendor';
 
 const UserDetailPage = () => {
@@ -51,12 +50,11 @@ const UserDetailPage = () => {
   }, [dispatch, id]);
 
   const onSubmit = async (data: newUser) => {
-    const resp = await dispatch(fetchThunk(API_PATHS.createUser, 'post', { ...data }));
+    const resp = await dispatch(fetchThunk(API_PATHS.updateUser, 'post', { ...data }));
 
     console.log(resp);
     if (resp.success) {
-      dispatch(setToastInfo({ open: true, message: 'Create user success', isSuccess: true }));
-      dispatch(replace(ROUTES.userList));
+      dispatch(setToastInfo({ open: true, message: 'Update user success', isSuccess: true }));
       return;
     }
 

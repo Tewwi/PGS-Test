@@ -93,4 +93,5 @@ export interface newUser {
   joined?: string;
   last_login?: string;
   referer?: string;
+  roles?: string[];
 }

@@ -15,7 +15,7 @@ const UserListPageFooter = (props: Props) => {
       style={{
         display: 'flex',
         position: 'fixed',
-        width: '60vw',
+        width: '60%',
         height: '50px',
         backgroundColor: '#323259',
         bottom: 0,
@@ -24,7 +24,7 @@ const UserListPageFooter = (props: Props) => {
         margin: '0 auto',
         boxShadow: '1px 1px 10px 10px #b18aff',
         borderRadius: '3px',
-        zIndex: '10000',
+        zIndex: '1',
       }}
     >
       <Button

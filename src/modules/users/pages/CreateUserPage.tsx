@@ -69,8 +69,8 @@ const CreateUserPage = () => {
               Create User
             </Typography>
           </div>
-          <MainInfo control={control} error={errors} watch={watch} />
-          <AccessInfo control={control} error={errors} watch={watch} />
+          <MainInfo control={control} error={errors} watch={watch} isDetail={false} />
+          <AccessInfo control={control} error={errors} watch={watch} isDetail={false} />
           <Tax control={control} error={errors} watch={watch} />
           <div
             style={{
