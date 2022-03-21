@@ -5,8 +5,7 @@ import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Control, Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import { ProductCreateParam } from '../../../../models/product';
-import { fieldData } from '../../pages/AddProductPage';
+import { fieldData, ProductCreateParam } from '../../../../models/product';
 import { MenuProps, required } from '../../utils';
 import DropInput from './DropInput';
 
@@ -42,7 +41,7 @@ const AddProduct = (props: Props) => {
       </div>
 
       <Typography variant="h5" sx={{ color: 'white', marginLeft: '18px', marginTop: '8px' }}>
-        Add Product
+        {!defaultValue ? 'Add Product' : 'Update Product'}
       </Typography>
       <div style={{ display: 'flex', width: '70vw', margin: 'auto', marginTop: '20px' }}>
         <Typography sx={{ fontSize: '16px', color: 'white', marginRight: '15px', alignSelf: 'center', width: '15%' }}>
@@ -137,12 +136,10 @@ const AddProduct = (props: Props) => {
         <div style={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
           <Controller
             control={control}
-            rules={required('Condition')}
             name="condition_id"
-            defaultValue={''}
+            defaultValue={data?.condition ? data?.condition[0].id : null}
             render={({ field: { value, ...props } }) => (
-              <select value={value} {...props} className="field_input">
-                <option value={''}></option>
+              <select value={value || ''} {...props} className="field_input">
                 {data?.condition?.map((item, index) => {
                   return (
                     <option key={index} value={item.id?.toString()}>

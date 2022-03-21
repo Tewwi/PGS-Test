@@ -3,32 +3,23 @@ import axios from 'axios';
 import { replace } from 'connected-react-router';
 import { convertToHTML } from 'draft-convert';
 import Cookies from 'js-cookie';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { API_PATHS } from '../../../configs/api';
 import { ROUTES } from '../../../configs/routes';
-import { Brand, Catagory, Condition, IShipping, ProductCreateParam, Vendor } from '../../../models/product';
+import { IShipping, ProductCreateParam } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
 import { getErrorMessageResponse } from '../../../utils';
 import { ACCESS_TOKEN_KEY } from '../../../utils/constants';
-import { fetchThunk } from '../../common/redux/thunk';
 import Loading from '../../layout/components/Loading';
 import { setToastInfo } from '../../layout/redux/layoutReducer';
 import AddProduct from '../components/AddProductPage/AddProduct';
 import Marketing from '../components/AddProductPage/Marketing';
 import Price from '../components/AddProductPage/Price';
 import Shipping from '../components/AddProductPage/Shipping';
-
-export interface fieldData {
-  vendor?: Vendor[];
-  catagory?: Catagory[];
-  brand?: Brand[];
-  condition?: Condition[];
-  shipping?: IShipping[];
-}
 
 const AddProductPage = () => {
   const {
@@ -51,7 +42,7 @@ const AddProductPage = () => {
   const { fields, append, remove } = useFieldArray({ name: 'shipping_to_zones', control });
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<fieldData>();
+  const data = useSelector((state: AppState) => state.toast.data);
 
   const handleAddShipping = useCallback(
     (obj: IShipping) => {
@@ -71,11 +62,7 @@ const AddProductPage = () => {
 
   const onSubmit = async (data: ProductCreateParam) => {
     setLoading(true);
-    console.log({
-      ...data,
-      description: convertToHTML(data.description.getCurrentContent()),
-      imagesOrder: data?.imgUpload?.map((item: any) => item[0].name),
-    });
+    console.log(data);
     const body = {
       ...data,
       description: convertToHTML(data.description.getCurrentContent()),
@@ -120,47 +107,6 @@ const AddProductPage = () => {
     dispatch(setToastInfo({ open: true, message: getErrorMessageResponse(json), isSuccess: false }));
     return;
   };
-
-  const fetchAllData = useCallback(async () => {
-    setLoading(true);
-    const dataInfo: { [key: string]: { url: string } } = {
-      vendor: {
-        url: API_PATHS.getVendor,
-      },
-      catagory: {
-        url: API_PATHS.getCategories,
-      },
-      brand: {
-        url: API_PATHS.getBrand,
-      },
-      condition: {
-        url: API_PATHS.getConditions,
-      },
-      shipping: {
-        url: API_PATHS.getShipping,
-      },
-    };
-
-    const promise = await Promise.all(
-      Object.keys(dataInfo)?.map((item) => {
-        return dispatch(fetchThunk(dataInfo[item].url, 'get'));
-      }),
-    );
-
-    setLoading(false);
-    const data = promise.reduce((result, cur, index) => {
-      result[Object.keys(dataInfo)[index]] = cur.data?.map((item: any) => ({
-        ...item,
-      }));
-      return result;
-    }, {} as any);
-
-    setData(data);
-  }, [dispatch]);
-
-  useEffect(() => {
-    fetchAllData();
-  }, [fetchAllData]);
 
   if (loading) {
     return <Loading />;

@@ -15,7 +15,9 @@ import { AppState } from '../../../redux/reducer';
 import { Action } from 'typesafe-actions';
 import { replace } from 'connected-react-router';
 import { logOutUser } from '../../auth/redux/authReducer';
-import { setToastInfo } from '../redux/layoutReducer';
+import { setFieldData, setToastInfo } from '../redux/layoutReducer';
+import { fetchThunk } from '../../common/redux/thunk';
+import { API_PATHS } from '../../../configs/api';
 
 interface Props {}
 
@@ -34,6 +36,41 @@ const NavBar: FC<Props> = ({ children }) => {
   };
   const toast = useSelector((state: AppState) => state.toast.toast);
 
+  const fetchAllData = React.useCallback(async () => {
+    const dataInfo: { [key: string]: { url: string } } = {
+      vendor: {
+        url: API_PATHS.getVendor,
+      },
+      catagory: {
+        url: API_PATHS.getCategories,
+      },
+      brand: {
+        url: API_PATHS.getBrand,
+      },
+      condition: {
+        url: API_PATHS.getConditions,
+      },
+      shipping: {
+        url: API_PATHS.getShipping,
+      },
+    };
+
+    const promise = await Promise.all(
+      Object.keys(dataInfo)?.map((item) => {
+        return dispatch(fetchThunk(dataInfo[item].url, 'get'));
+      }),
+    );
+
+    const data = promise.reduce((result, cur, index) => {
+      result[Object.keys(dataInfo)[index]] = cur.data?.map((item: any) => ({
+        ...item,
+      }));
+      return result;
+    }, {} as any);
+
+    dispatch(setFieldData(data));
+  }, [dispatch]);
+
   React.useEffect(() => {
     if (location.pathname === ROUTES.login) {
       setIsHidden(true);
@@ -41,6 +78,12 @@ const NavBar: FC<Props> = ({ children }) => {
       setIsHidden(false);
     }
   }, [location.pathname]);
+
+  React.useEffect(() => {
+    if (!isHidden) {
+      fetchAllData();
+    }
+  }, [fetchAllData, isHidden]);
 
   if (isHidden) {
     return <div>{children}</div>;

@@ -7,7 +7,7 @@ import { EditorState } from 'draft-js';
 import Cookies from 'js-cookie';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
@@ -25,7 +25,6 @@ import Marketing from '../components/AddProductPage/Marketing';
 import Price from '../components/AddProductPage/Price';
 import Shipping from '../components/AddProductPage/Shipping';
 import { concatImgOrder } from '../utils';
-import { fieldData } from './AddProductPage';
 
 const ProductDetail = () => {
   const { id } = useParams() as {
@@ -34,7 +33,7 @@ const ProductDetail = () => {
 
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [dataDetail, setDataDetail] = useState<ProductCreateParam>();
-  const [dataField, setDataField] = useState<fieldData>();
+  const dataField = useSelector((state: AppState) => state.toast.data);
   const [loading, setLoading] = useState(false);
   const {
     control,
@@ -47,43 +46,6 @@ const ProductDetail = () => {
   });
   const { fields, append, remove } = useFieldArray({ name: 'shipping_to_zones', control });
   const [deleItemIndex, setDeleItemIndex] = useState<number[]>([]);
-
-  const fetchAllData = useCallback(async () => {
-    setLoading(true);
-    const dataInfo: { [key: string]: { url: string } } = {
-      vendor: {
-        url: API_PATHS.getVendor,
-      },
-      catagory: {
-        url: API_PATHS.getCategories,
-      },
-      brand: {
-        url: API_PATHS.getBrand,
-      },
-      condition: {
-        url: API_PATHS.getConditions,
-      },
-      shipping: {
-        url: API_PATHS.getShipping,
-      },
-    };
-
-    const promise = await Promise.all(
-      Object.keys(dataInfo)?.map((item) => {
-        return dispatch(fetchThunk(dataInfo[item].url, 'get'));
-      }),
-    );
-
-    setLoading(false);
-    const data = promise.reduce((result, cur, index) => {
-      result[Object.keys(dataInfo)[index]] = cur.data?.map((item: any) => ({
-        ...item,
-      }));
-      return result;
-    }, {} as any);
-
-    setDataField(data);
-  }, [dispatch]);
 
   const fetchDataDetail = useCallback(async () => {
     setLoading(true);
@@ -106,20 +68,22 @@ const ProductDetail = () => {
       })[0];
 
       const time = dayjs(resp.data.arrival_date * 1000).format('YYYY-MM-DD');
-      setDataDetail({
+      const newData = {
         ...resp.data,
         description: description,
         vendor_id: vendor,
         arrival_date: time,
         shipping_to_zones: resp.data.shipping,
         categories: resp.data.categories.map((item: any) => item.category_id),
-      });
+      };
+      setDataDetail(newData);
+      reset(newData);
       return;
     }
 
     console.log('error');
     return;
-  }, [dispatch, id, dataField]);
+  }, [dispatch, id, dataField, reset]);
 
   const handleAddShipping = useCallback(
     (obj: IShipping) => {
@@ -138,7 +102,6 @@ const ProductDetail = () => {
   );
 
   const handleDeleImg = useCallback((id: number) => {
-    console.log(id);
     setDeleItemIndex((prev) => [...prev, id]);
   }, []);
 
@@ -197,20 +160,10 @@ const ProductDetail = () => {
   );
 
   useEffect(() => {
-    fetchAllData();
-  }, [fetchAllData]);
-
-  useEffect(() => {
     if (dataField) {
       fetchDataDetail();
     }
   }, [fetchDataDetail, dataField]);
-
-  useEffect(() => {
-    if (dataDetail) {
-      reset(dataDetail);
-    }
-  }, [dataDetail, reset]);
 
   if (loading) {
     return <Loading />;

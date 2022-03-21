@@ -66,11 +66,19 @@ export interface IShipping {
   zone_name?: string;
 }
 
+export interface fieldData {
+  vendor?: Vendor[];
+  catagory?: Catagory[];
+  brand?: Brand[];
+  condition?: Condition[];
+  shipping?: IShipping[];
+}
+
 export interface ProductCreateParam {
   vendor_id: Vendor;
   name: string;
   brand_id: string;
-  condition_id: string;
+  condition_id: string | null;
   sku?: string;
   imagesOrder: string[];
   categories: number[];
