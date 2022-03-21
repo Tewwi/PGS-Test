@@ -90,7 +90,7 @@ const NavBar: FC<Props> = ({ children }) => {
   } else {
     return (
       <Box>
-        <AppBar position="static" sx={{ backgroundColor: '#323259' }}>
+        <AppBar position="static" sx={{ backgroundColor: '#323259', boxShadow: '0 0.5rem 1rem 0 #1a1f33' }}>
           <Toolbar>
             <IconButton
               onClick={() => setSideBarOpen(!sideBarOpen)}
@@ -144,7 +144,7 @@ const NavBar: FC<Props> = ({ children }) => {
             </div>
           </Toolbar>
         </AppBar>
-        <div style={{ display: 'flex', maxWidth: '100vw' }}>
+        <div style={{ display: 'flex', maxWidth: '100vw', backgroundColor: '#1b1b38' }}>
           <SideBar
             sideBarOpen={sideBarOpen}
             closeSideBar={() => {

@@ -14,7 +14,6 @@ export interface CreateUserPageComProps {
 
 const MainInfo = (props: CreateUserPageComProps) => {
   const { control, error, watch, isDetail } = props;
-  console.log(isDetail);
   const required = { required: { value: true, message: 'This field is requierd' } };
 
   return (

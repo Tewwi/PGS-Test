@@ -87,7 +87,6 @@ const AccessInfo = (props: CreateUserPageComProps) => {
               render={({ field: { onChange, value, ...props } }) => (
                 <select
                   onChange={(e) => {
-                    console.log(e.target.value);
                     onChange(e.target.value);
                     setAccessLevelValue(e.target.value);
                   }}

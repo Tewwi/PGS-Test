@@ -114,19 +114,19 @@ const ProductPageFooter = (props: Props) => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box className="modal_content" style={{ backgroundColor: '#323259' }}>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '20px' }}>
-              <Typography variant="h6" style={{ margin: 'auto' }}>
+          <Box className="modal_content">
+            <div style={{ display: 'flex', color: 'white', borderBottom: '1px solid black' }}>
+              <Typography variant="h6" style={{ margin: '15px' }}>
                 Confirm Delete
               </Typography>
             </div>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '25px' }}>
-              <Typography style={{ margin: 'auto' }}>Do you want to delete this product?</Typography>
+            <div style={{ display: 'flex', color: 'white', marginBottom: '20px', borderBottom: '1px solid black' }}>
+              <Typography style={{ margin: '20px 15px' }}>Do you want to delete this product?</Typography>
             </div>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between', margin: '0px 40px' }}>
               <Button
                 variant="contained"
-                sx={{ color: '#ad84ff' }}
+                sx={{ color: 'white', backgroundColor: '#a16eff' }}
                 onClick={() => {
                   handleRemovebtn();
                   setIsModalOpen(false);
@@ -134,7 +134,11 @@ const ProductPageFooter = (props: Props) => {
               >
                 Yes
               </Button>
-              <Button variant="contained" sx={{ color: '#ff5880' }} onClick={() => setIsModalOpen(false)}>
+              <Button
+                variant="contained"
+                sx={{ color: '#white', backgroundColor: '#ff3d71' }}
+                onClick={() => setIsModalOpen(false)}
+              >
                 No
               </Button>
             </div>
@@ -147,19 +151,19 @@ const ProductPageFooter = (props: Props) => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box className="modal_content" style={{ backgroundColor: '#323259' }}>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '20px' }}>
-              <Typography variant="h6" style={{ margin: 'auto' }}>
+          <Box className="modal_content">
+            <div style={{ display: 'flex', color: 'white', borderBottom: '1px solid black' }}>
+              <Typography variant="h6" style={{ margin: '15px' }}>
                 Confirm Update
               </Typography>
             </div>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '25px' }}>
-              <Typography style={{ margin: 'auto' }}>Do you want to update this product?</Typography>
+            <div style={{ display: 'flex', color: 'white', marginBottom: '20px', borderBottom: '1px solid black' }}>
+              <Typography style={{ margin: '20px 15px' }}>Do you want to update this product?</Typography>
             </div>
-            <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between', margin: '0px 40px' }}>
               <Button
                 variant="contained"
-                sx={{ color: '#ad84ff' }}
+                sx={{ color: 'white', backgroundColor: '#a16eff' }}
                 onClick={() => {
                   handleSaveBtn();
                   setIsModalOpen(false);
@@ -167,7 +171,11 @@ const ProductPageFooter = (props: Props) => {
               >
                 Yes
               </Button>
-              <Button variant="contained" sx={{ color: '#ff5880' }} onClick={() => setIsModalOpen(false)}>
+              <Button
+                variant="contained"
+                sx={{ color: 'white', backgroundColor: '#ff3d71' }}
+                onClick={() => setIsModalOpen(false)}
+              >
                 No
               </Button>
             </div>

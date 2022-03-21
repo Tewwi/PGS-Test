@@ -22,8 +22,6 @@ interface sortInfo {
   sort: Order;
 }
 
-let count = 0;
-
 const ProductsListPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [tableData, setTableData] = useState<Product[]>();
@@ -53,7 +51,6 @@ const ProductsListPage = () => {
     isDele: false,
     text: 'Save Change',
   });
-  console.log(count++);
 
   const handleFilter = useCallback((data: ProductFilter) => {
     setFilterValue(data);
@@ -81,7 +78,6 @@ const ProductsListPage = () => {
     setLoading(false);
 
     if (resp.data) {
-      console.log(resp);
       setTableData(
         resp.data.map((item: Product) => {
           return { ...item, checked: false, isDele: false };
@@ -93,7 +89,6 @@ const ProductsListPage = () => {
 
     setTableData([]);
     console.log('error');
-
     return;
   }, [dispatch, pageInfo.itemPerPage, pageInfo.page, filterValue, sortInfo]);
 
@@ -106,7 +101,7 @@ const ProductsListPage = () => {
 
   const handleChangItemPerPage = useCallback(
     (num: number) => {
-      setPageInfo({ ...pageInfo, itemPerPage: num });
+      setPageInfo({ ...pageInfo, itemPerPage: num, page: 1 });
     },
     [pageInfo],
   );
@@ -173,6 +168,7 @@ const ProductsListPage = () => {
       if (tableData) {
         const newData = [...tableData];
         const cloneItem = { ...newData[index], price: data.price, amount: data.amount };
+        if (JSON.stringify(newData[index]) === JSON.stringify(cloneItem)) return;
         newData[index] = cloneItem;
         setItemChange((prev) => [...prev, data]);
         setTableData(newData);
@@ -205,12 +201,10 @@ const ProductsListPage = () => {
     setTableData((prev) => {
       return prev?.filter((item) => item.isDele === false);
     });
-    setTotalItem((prev) => prev - deleItem.length);
-    setLoading(false);
-    setDeleItem([]);
+    fetchProductData();
     console.log(resp);
     return;
-  }, [dispatch, deleItem]);
+  }, [dispatch, deleItem, fetchProductData]);
 
   useEffect(() => {
     fetchProductData();
@@ -290,14 +284,14 @@ const ProductsListPage = () => {
             ) : (
               <TableSkeleton />
             )}
+            <ProductPagination
+              currPage={pageInfo.page}
+              itemPerPage={pageInfo.itemPerPage}
+              totalItem={totalItem}
+              handleChangePage={handleChangePage}
+              handleChangItemPerPage={handleChangItemPerPage}
+            />
           </Container>
-          <ProductPagination
-            currPage={pageInfo.page}
-            itemPerPage={pageInfo.itemPerPage}
-            totalItem={totalItem}
-            handleChangePage={handleChangePage}
-            handleChangItemPerPage={handleChangItemPerPage}
-          />
         </div>
         <ProductPageFooter
           data={selectItem && selectItem.length > 0 ? selectItem : tableData}

@@ -1,13 +1,43 @@
-import { Checkbox, FormControlLabel, FormGroup, MenuItem, OutlinedInput, Select, Typography } from '@mui/material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Input,
+  ListItemText,
+  MenuItem,
+  Select,
+  Typography,
+} from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { memberships, MenuProps, required, sale_unit } from '../../utils';
 import { AddPageComProps } from './AddProduct';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const Price = (props: AddPageComProps) => {
   const { control, error } = props;
   const [isSale, setIsSale] = React.useState(false);
+
+  const handleSelectCheckBox = (onChange: (...event: any[]) => void, value?: number[] | null, item?: number | null) => {
+    if (value && item) {
+      if (value.indexOf(item) > -1) {
+        const newData = value.filter((valueItem) => valueItem != item);
+        onChange([...newData]);
+      } else {
+        onChange([...value, item]);
+      }
+    }
+  };
+
+  const handleRenderValueCheckBox = (arr: any) => {
+    if (memberships && arr !== null) {
+      const newData = memberships.filter((item) => {
+        return arr.indexOf(item.value ? +item.value : 1) >= 0;
+      });
+      return newData.map((item) => item.label);
+    }
+    return [];
+  };
 
   return (
     <div
@@ -35,14 +65,14 @@ const Price = (props: AddPageComProps) => {
             control={control}
             name="memberships"
             defaultValue={[]}
-            render={({ field: { value, ...props } }) => (
+            render={({ field: { value, onChange, ...props } }) => (
               <Select
                 {...props}
                 multiple
                 value={value ?? ''}
                 defaultValue={[]}
                 input={
-                  <OutlinedInput
+                  <Input
                     className="field_input"
                     style={{
                       maxHeight: '42px',
@@ -50,11 +80,24 @@ const Price = (props: AddPageComProps) => {
                     }}
                   />
                 }
+                renderValue={(select) => {
+                  return handleRenderValueCheckBox(value || select).join(', ');
+                }}
                 MenuProps={MenuProps}
               >
-                {memberships?.map((item, index) => (
-                  <MenuItem key={index} value={item.value || 0}>
-                    {item.label}
+                {memberships?.map((item) => (
+                  <MenuItem
+                    key={item.value}
+                    onClick={() => handleSelectCheckBox(onChange, value, item.value ? +item.value : 1)}
+                  >
+                    <Checkbox
+                      sx={{ color: 'white' }}
+                      checked={value ? value.indexOf(item.value ? +item.value : 1) > -1 : true}
+                    />
+                    <ListItemText
+                      disableTypography
+                      primary={<Typography style={{ color: 'white' }}>{item.label}</Typography>}
+                    />
                   </MenuItem>
                 ))}
               </Select>

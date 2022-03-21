@@ -30,7 +30,6 @@ const ProductDetail = () => {
   const { id } = useParams() as {
     id: string;
   };
-
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [dataDetail, setDataDetail] = useState<ProductCreateParam>();
   const dataField = useSelector((state: AppState) => state.toast.data);
@@ -53,8 +52,6 @@ const ProductDetail = () => {
     const resp = await dispatch(fetchThunk(API_PATHS.getProductDetail, 'post', { id: id }));
 
     setLoading(false);
-
-    console.log(resp);
 
     if (resp && resp.success && dataField) {
       const contentState = EditorState.createEmpty();

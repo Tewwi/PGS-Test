@@ -60,7 +60,6 @@ const DropInput = (props: Props) => {
   const handleValueUpload = (file: File[]) => {
     const result = [...valueUpload, file];
     setValueUpload((prev) => [...prev, file]);
-    console.log(result);
     return result;
   };
 

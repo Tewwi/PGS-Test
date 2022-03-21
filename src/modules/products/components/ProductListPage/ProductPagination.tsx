@@ -27,7 +27,15 @@ const ProductPagination = (props: Props) => {
   }, [totalItem, itemPerPage]);
 
   return (
-    <div style={{ display: 'flex', width: '70vw', justifyContent: 'space-between', paddingBottom: '60px' }}>
+    <div
+      style={{
+        display: 'flex',
+        width: '100%',
+        justifyContent: 'flex-start',
+        backgroundColor: '#323259',
+        marginBottom: '60px',
+      }}
+    >
       <Pagination
         color="secondary"
         classes={{ ul: classes.ul }}
@@ -35,10 +43,10 @@ const ProductPagination = (props: Props) => {
         page={currPage}
         variant="outlined"
         shape="rounded"
-        sx={{ margin: 'auto' }}
+        sx={{ alignSelf: 'center' }}
         onChange={handleChangePage}
       />
-      <div style={{ color: 'white', margin: 'auto', display: 'flex' }}>
+      <div style={{ color: 'white', margin: '10px 25px', display: 'flex' }}>
         <Typography sx={{ margin: 'auto' }}>{totalItem} items</Typography>
         <FormControl sx={{ m: 1, minWidth: 150, display: 'flex', flexDirection: 'row' }}>
           <select

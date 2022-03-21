@@ -4,7 +4,7 @@ import React from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Control, Controller } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { fieldData, ProductCreateParam } from '../../../../models/product';
 import { MenuProps, required } from '../../utils';
 import DropInput from './DropInput';
@@ -23,7 +23,7 @@ interface Props {
 
 const AddProduct = (props: Props) => {
   const { control, data, error, defaultValue } = props.rest;
-
+  const history = useHistory();
   return (
     <div
       style={{
@@ -34,10 +34,13 @@ const AddProduct = (props: Props) => {
         paddingBottom: '20px',
       }}
     >
-      <div style={{ marginTop: '10px', marginLeft: '15px' }}>
-        <Link to={'/'}>
-          <ArrowCircleLeftIcon fontSize="large" htmlColor="white" />
-        </Link>
+      <div
+        style={{ marginTop: '10px', marginLeft: '15px' }}
+        onClick={() => {
+          history.goBack();
+        }}
+      >
+        <ArrowCircleLeftIcon fontSize="large" htmlColor="white" />
       </div>
 
       <Typography variant="h5" sx={{ color: 'white', marginLeft: '18px', marginTop: '8px' }}>

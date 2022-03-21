@@ -28,6 +28,9 @@ const TableItem = (props: Props) => {
   const { data, onCheckBox, handleTrashIcon, index, handleChangeValueItem, handleClickPowerBtn } = props;
   const [isSelect, setIsSelect] = React.useState(false);
   const [isInputOpen, setIsInputOpen] = React.useState(false);
+  const priceRef = React.useRef<any>();
+  const amountRef = React.useRef<any>();
+  const [inputFlag, setInputFlag] = React.useState(true);
   const [valueInput, setValueInput] = React.useState({
     price: data.price,
     amount: data.amount,
@@ -37,8 +40,9 @@ const TableItem = (props: Props) => {
   const colorPower = data.enabled == '1' ? '#aaf285' : 'white';
   const classes = useStyles();
 
-  const handleOpenInput = () => {
+  const handleOpenInput = (type: string) => {
     if (data.isDele) return;
+    setInputFlag(type === 'price');
     setIsInputOpen(true);
   };
 
@@ -52,6 +56,16 @@ const TableItem = (props: Props) => {
     setOpenModal(false);
   };
 
+  React.useEffect(() => {
+    if (isInputOpen && priceRef?.current) {
+      if (inputFlag) {
+        priceRef.current.focus();
+      } else {
+        amountRef.current.focus();
+      }
+    }
+  }, [isInputOpen, inputFlag]);
+
   return (
     <>
       <Modal
@@ -61,25 +75,29 @@ const TableItem = (props: Props) => {
         aria-describedby="modal-modal-description"
       >
         <Box className="modal_content" style={{ backgroundColor: '#323259' }}>
-          <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '20px' }}>
-            <Typography variant="h6" style={{ margin: 'auto' }}>
+          <div style={{ display: 'flex', color: 'white', borderBottom: '1px solid black' }}>
+            <Typography variant="h6" style={{ margin: '15px' }}>
               Confirm Update
             </Typography>
           </div>
-          <div style={{ display: 'flex', color: 'white', justifyContent: 'flex-start', marginBottom: '25px' }}>
-            <Typography style={{ margin: 'auto' }}>Do you want to update this product?</Typography>
+          <div style={{ display: 'flex', color: 'white', marginBottom: '20px', borderBottom: '1px solid black' }}>
+            <Typography style={{ margin: '20px 15px' }}>Do you want to update this product?</Typography>
           </div>
-          <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between', margin: '0px 40px' }}>
             <Button
               variant="contained"
-              sx={{ color: '#ad84ff' }}
+              sx={{ color: 'white', backgroundColor: '#a16eff' }}
               onClick={() => {
                 handlePowerBtn();
               }}
             >
               Yes
             </Button>
-            <Button variant="contained" sx={{ color: '#ff5880' }} onClick={() => setOpenModal(false)}>
+            <Button
+              variant="contained"
+              sx={{ color: 'white', backgroundColor: '#ff3d71' }}
+              onClick={() => setOpenModal(false)}
+            >
               No
             </Button>
           </div>
@@ -134,6 +152,7 @@ const TableItem = (props: Props) => {
                     outline: 'none',
                     border: 'none',
                   }}
+                  ref={priceRef}
                   value={valueInput.price}
                   onChange={(e) =>
                     setValueInput((prev) => {
@@ -152,6 +171,7 @@ const TableItem = (props: Props) => {
               <input
                 type={'number'}
                 value={valueInput.amount}
+                ref={amountRef}
                 onChange={(e) =>
                   setValueInput((prev) => {
                     return { ...prev, amount: e.target.value };
@@ -163,13 +183,23 @@ const TableItem = (props: Props) => {
           </>
         ) : (
           <>
-            <TableCell align="center" sx={{ color: 'white' }}>
-              <Typography className="row_input" onClick={() => handleOpenInput()} sx={{ fontSize: '13px' }} noWrap>
+            <TableCell align="left" sx={{ color: 'white' }}>
+              <Typography
+                className="row_input"
+                onClick={() => handleOpenInput('price')}
+                sx={{ fontSize: '13px' }}
+                noWrap
+              >
                 ${Number(data.price).toFixed(2)}
               </Typography>
             </TableCell>
-            <TableCell align="center" style={{ minWidth: 50, maxWidth: 50, color: 'white' }}>
-              <Typography className="row_input" onClick={() => handleOpenInput()} sx={{ fontSize: '13px' }} noWrap>
+            <TableCell align="left" style={{ minWidth: 50, maxWidth: 50, color: 'white' }}>
+              <Typography
+                className="row_input"
+                onClick={() => handleOpenInput('amount')}
+                sx={{ fontSize: '13px' }}
+                noWrap
+              >
                 {data.amount}
               </Typography>
             </TableCell>
