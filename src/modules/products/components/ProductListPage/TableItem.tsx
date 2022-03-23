@@ -21,7 +21,7 @@ interface Props {
   index: number;
   onCheckBox(id: string): void;
   handleTrashIcon(id: string): void;
-  handleChangeValueItem(data: { price: string; amount: string; id: string }, index: number): void;
+  handleChangeValueItem(data: { price: string; stock: string; id: string }, index: number): void;
   handleClickPowerBtn(id: string, enabled: boolean): void;
 }
 const TableItem = (props: Props) => {
@@ -33,7 +33,7 @@ const TableItem = (props: Props) => {
   const [inputFlag, setInputFlag] = React.useState(true);
   const [valueInput, setValueInput] = React.useState({
     price: data.price,
-    amount: data.amount,
+    stock: data.amount,
     id: data.id,
   });
   const [openModal, setOpenModal] = React.useState(false);
@@ -170,11 +170,11 @@ const TableItem = (props: Props) => {
             >
               <input
                 type={'number'}
-                value={valueInput.amount}
+                value={valueInput.stock}
                 ref={amountRef}
                 onChange={(e) =>
                   setValueInput((prev) => {
-                    return { ...prev, amount: e.target.value };
+                    return { ...prev, stock: e.target.value };
                   })
                 }
                 style={{ width: '100%', outline: 'none', border: 'none', borderRadius: '3px' }}

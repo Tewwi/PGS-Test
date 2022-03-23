@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Table, TableBody, TableContainer } from '@mui/material';
 import { Product } from '../../../../models/product';
 import { Order } from '../../pages/ProductsListPage';
@@ -11,7 +11,7 @@ interface Props {
   handleCheckBox(id: string): void;
   handleSort(name: string): void;
   handleTrashIcon(id: string): void;
-  handleChangeValueItem(data: { price: string; amount: string; id: string }, index: number): void;
+  handleChangeValueItem(data: { price: string; stock: string; id: string }, index: number): void;
   handleClickPowerBtn(id: string, enabled: boolean): void;
   sortInfo: {
     order_by: string;
@@ -58,4 +58,4 @@ const TableProduct = (props: Props) => {
   );
 };
 
-export default TableProduct;
+export default memo(TableProduct);
