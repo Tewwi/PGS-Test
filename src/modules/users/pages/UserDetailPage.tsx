@@ -3,12 +3,10 @@ import { Button, Typography } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { API_PATHS } from '../../../configs/api';
-import { ROUTES } from '../../../configs/routes';
 import { newUser } from '../../../models/userList';
 import { AppState } from '../../../redux/reducer';
 import { getErrorMessageResponse } from '../../../utils';
@@ -32,6 +30,7 @@ const UserDetailPage = () => {
     reset,
     formState: { errors, isValid },
   } = useForm<newUser>({ mode: 'onChange', defaultValues: dataDetail });
+  const history = useHistory();
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
   const [loading, setLoading] = React.useState(false);
 
@@ -96,10 +95,8 @@ const UserDetailPage = () => {
               flexDirection: 'column',
             }}
           >
-            <div style={{ marginTop: '10px', marginLeft: '15px' }}>
-              <Link to={ROUTES.userList}>
-                <ArrowCircleLeftIcon fontSize="large" htmlColor="white" />
-              </Link>
+            <div style={{ marginTop: '10px', marginLeft: '15px' }} onClick={() => history.goBack()}>
+              <ArrowCircleLeftIcon fontSize="large" htmlColor="white" />
             </div>
             <Typography variant="h5" sx={{ color: 'white', margin: '8px 0px 10px 18px' }}>
               {`${dataDetail?.email} (${dataDetail?.companyName || ''})`}

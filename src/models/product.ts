@@ -5,6 +5,10 @@ export interface ProductFilter {
   search_type: string[];
   availability?: string;
   vendor?: string;
+  page?: number;
+  count?: number;
+  sort?: string;
+  order_by?: string;
 }
 
 export interface Product {
@@ -25,7 +29,7 @@ export interface Product {
 export interface ProductItem {
   id: string;
   price: string;
-  amount: string;
+  stock: string;
 }
 
 export interface Vendor {

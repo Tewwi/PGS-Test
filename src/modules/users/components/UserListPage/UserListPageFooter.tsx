@@ -56,12 +56,12 @@ const UserListPageFooter = (props: Props) => {
       >
         <Box className="modal_content" style={{ backgroundColor: '#323259' }}>
           <div style={{ display: 'flex', color: 'white', borderBottom: '1px solid black' }}>
-            <Typography variant="h6" style={{ margin: 'auto' }}>
+            <Typography variant="h6" style={{ margin: '15px' }}>
               Confirm Delete
             </Typography>
           </div>
           <div style={{ display: 'flex', color: 'white', marginBottom: '20px', borderBottom: '1px solid black' }}>
-            <Typography style={{ margin: 'auto' }}>Do you want to delete this product?</Typography>
+            <Typography style={{ margin: '20px 15px' }}>Do you want to delete this product?</Typography>
           </div>
           <div style={{ display: 'flex', color: 'white', justifyContent: 'space-between', margin: '0px 40px' }}>
             <Button

@@ -1,6 +1,8 @@
 import { FormControl, Pagination, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
+import { ProductFilter } from '../../../../models/product';
+import { FilterParam } from '../../../../models/userList';
 import { optionItemPerPage } from '../../utils';
 
 interface Props {
@@ -9,6 +11,7 @@ interface Props {
   totalItem: number;
   handleChangePage(event: React.ChangeEvent<unknown>, page: number): void;
   handleChangItemPerPage(num: number): void;
+  valueDefault?: ProductFilter | FilterParam;
 }
 
 const useStyles = makeStyles(() => ({
@@ -20,11 +23,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ProductPagination = (props: Props) => {
-  const { currPage, itemPerPage, totalItem, handleChangePage, handleChangItemPerPage } = props;
+  const { currPage, itemPerPage, totalItem, handleChangePage, handleChangItemPerPage, valueDefault } = props;
   const classes = useStyles();
   const lastPage = useMemo(() => {
+    if (valueDefault !== undefined) {
+      return Math.ceil(totalItem / (valueDefault.count || itemPerPage));
+    }
     return Math.ceil(totalItem / itemPerPage);
-  }, [totalItem, itemPerPage]);
+  }, [totalItem, itemPerPage, valueDefault]);
 
   return (
     <div
@@ -40,7 +46,7 @@ const ProductPagination = (props: Props) => {
         color="secondary"
         classes={{ ul: classes.ul }}
         count={lastPage}
-        page={currPage}
+        page={valueDefault?.page || currPage}
         variant="outlined"
         shape="rounded"
         sx={{ alignSelf: 'center' }}
@@ -51,7 +57,7 @@ const ProductPagination = (props: Props) => {
         <FormControl sx={{ m: 1, minWidth: 150, display: 'flex', flexDirection: 'row' }}>
           <select
             style={{ width: '50%' }}
-            value={itemPerPage}
+            value={valueDefault?.count || itemPerPage}
             onChange={(e) => handleChangItemPerPage(+e.target.value)}
             className="field_input"
           >
@@ -70,4 +76,4 @@ const ProductPagination = (props: Props) => {
   );
 };
 
-export default ProductPagination;
+export default memo(ProductPagination);

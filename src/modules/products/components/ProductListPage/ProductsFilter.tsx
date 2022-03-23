@@ -12,15 +12,12 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { memo } from 'react';
 import { Controller, ControllerRenderProps, FieldValues, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { Action } from 'typesafe-actions';
-import { API_PATHS } from '../../../../configs/api';
-import { ProductFilter, Vendor } from '../../../../models/product';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
+import { ProductFilter } from '../../../../models/product';
 import { AppState } from '../../../../redux/reducer';
-import { fetchThunk } from '../../../common/redux/thunk';
 import { availabilityStatus, checkBoxValue, stockStatus } from '../../utils';
 
 interface Props {
@@ -28,63 +25,44 @@ interface Props {
 }
 
 const ProductsFilter = (props: Props) => {
-  const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
-  const { control, handleSubmit } = useForm();
-
-  const [category, setCategory] = React.useState<string[]>([]);
+  const filterDefault = useSelector((state: AppState) => state.product.dataFilter);
+  const { control, handleSubmit, reset } = useForm<ProductFilter>({ defaultValues: filterDefault });
+  const category = useSelector((state: AppState) => state.toast.data?.catagory);
+  const vendor = useSelector((state: AppState) => state.toast.data?.vendor);
   const [moreOption, setMoreOption] = React.useState(false);
-  const [vendor, setVendor] = React.useState<Vendor[]>();
+  const location = useLocation();
 
   const onSubmit = (data: any) => {
-    console.log(data);
     props.handleFilter(data);
     return;
   };
-
-  const fetchCategoryData = React.useCallback(async () => {
-    if (category.length <= 0) {
-      const resp = await dispatch(fetchThunk(API_PATHS.getCategories, 'get'));
-      if (resp.success) {
-        setCategory(resp.data);
-      }
-      return;
-    }
-    return;
-  }, [dispatch, category.length]);
-
-  const fetchVendorData = React.useCallback(async () => {
-    if (!vendor) {
-      const resp = await dispatch(fetchThunk(API_PATHS.getVendor, 'get'));
-      if (resp.success) {
-        setVendor(resp.data);
-      }
-      return;
-    }
-    return;
-  }, [dispatch, vendor]);
-
-  useEffect(() => {
-    fetchCategoryData();
-  }, [fetchCategoryData]);
-
-  useEffect(() => {
-    fetchVendorData();
-  }, [fetchVendorData]);
 
   const onChangeCheckBox = (
     e: React.ChangeEvent<HTMLInputElement>,
     checked: boolean,
     field: ControllerRenderProps<FieldValues>,
   ) => {
-    if (!field.value) {
-      field.value = [];
-    }
+    const values = typeof field.value === 'string' ? field.value.split(',') : field.value;
     if (checked) {
-      field.onChange([...field.value, e.target.value]);
+      field.onChange([...values, e.target.value]);
     } else {
-      field.onChange(field.value.filter((value: any) => value !== e.target.value));
+      field.onChange(values.filter((value: any) => value !== e.target.value));
     }
   };
+
+  React.useEffect(() => {
+    if (filterDefault) {
+      reset(filterDefault);
+    } else {
+      reset();
+    }
+  }, [filterDefault, reset]);
+
+  React.useEffect(() => {
+    if (location.search == '') {
+      reset();
+    }
+  }, [location, reset]);
 
   return (
     <div
@@ -113,7 +91,7 @@ const ProductsFilter = (props: Props) => {
               render={({ field }) => (
                 <select {...field} className="field_input_user">
                   <option value="0">Any Catagory</option>
-                  {category.map((item: any, index) => {
+                  {category?.map((item: any, index) => {
                     return (
                       <option key={index} value={item.id}>
                         {item.name}
@@ -169,13 +147,13 @@ const ProductsFilter = (props: Props) => {
                         <>
                           {checkBoxValue.map((item) => (
                             <FormControlLabel
-                              key={item}
-                              label={item}
+                              key={item.value}
+                              label={item.label}
                               control={
                                 <Checkbox
-                                  value={item}
+                                  value={item.value}
                                   sx={{ color: 'white' }}
-                                  checked={field.value?.includes(item) || false}
+                                  checked={field.value?.includes(item.value) || false}
                                   onChange={(e, checked) => onChangeCheckBox(e, checked, { ...field })}
                                 />
                               }
@@ -185,7 +163,7 @@ const ProductsFilter = (props: Props) => {
                       )}
                       name="search_type"
                       control={control}
-                      defaultValue={['']}
+                      defaultValue={[]}
                     />
                   </FormGroup>
                 </div>
@@ -225,9 +203,9 @@ const ProductsFilter = (props: Props) => {
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       onChange={(event, item) => {
-                        onChange(item ? item.login : '');
+                        onChange(item ? item.id : '');
                       }}
-                      value={value}
+                      value={vendor?.filter((item) => item.id == value)[0]}
                       options={vendor || []}
                       getOptionLabel={(item) => (item.name ? item.name : '')}
                       isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -274,4 +252,4 @@ const ProductsFilter = (props: Props) => {
   );
 };
 
-export default ProductsFilter;
+export default memo(ProductsFilter);

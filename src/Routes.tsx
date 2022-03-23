@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { ROUTES } from './configs/routes';
 import Loading from './modules/layout/components/Loading';
 import NavBar from './modules/layout/components/NavBar';
@@ -34,7 +34,9 @@ export const Routes = (props: Props) => {
           <ProtectedRoute path={ROUTES.createUser} component={CreateUserPage} />
           <Route path={ROUTES.contact} component={ContactPage} />
 
-          <ProtectedRoute path="/" component={ProductsListPage} />
+          <Route path="/">
+            <Redirect to={ROUTES.productList} />
+          </Route>
         </Switch>
       </NavBar>
     </Suspense>

@@ -1,9 +1,9 @@
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { Button, Checkbox, Collapse, Grid, Input, ListItemText, MenuItem, Select, Typography } from '@mui/material';
-import React from 'react';
+import React, { memo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
 import { API_PATHS } from '../../../../configs/api';
@@ -20,10 +20,11 @@ interface Props {
 
 const UserFilter = (props: Props) => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
+  const filterDefault = useSelector((state: AppState) => state.userList.dataFilter);
   const [country, setCountry] = React.useState<Country[]>();
   const [role, setRole] = React.useState<UserRole>();
   const [moreOption, setMoreOption] = React.useState(false);
-  const { control, handleSubmit } = useForm<FilterParam>();
+  const { control, handleSubmit, reset } = useForm<FilterParam>();
 
   const fetchFilterData = React.useCallback(async () => {
     const respRole = await dispatch(fetchThunk(API_PATHS.getRole, 'get'));
@@ -46,25 +47,40 @@ const UserFilter = (props: Props) => {
   };
 
   const handleRenderSelectValue = (obj: any, value: string[], fieldName: string, keyId: string) => {
-    const result = (Object.keys(obj) as Array<keyof typeof obj>).map((key) => {
-      const temp = obj[key].filter((item: any) => {
-        return value.indexOf(item[`${keyId}`]) > -1;
+    if (obj) {
+      const result = (Object.keys(obj) as Array<keyof typeof obj>).map((key) => {
+        const temp = obj[key].filter((item: any) => {
+          return value.indexOf(item[`${keyId}`]) > -1;
+        });
+
+        return temp.map((item: any) => item[`${fieldName}`]);
       });
 
-      return temp.map((item: any) => item[`${fieldName}`]);
-    });
-
-    return result.filter((item) => item);
+      return result.filter((item) => item.length > 0);
+    }
+    return ['All'];
   };
 
   const onSubmit = (data: FilterParam) => {
-    // console.log(data);
     props.handleFilter(data);
   };
 
   React.useEffect(() => {
     fetchFilterData();
   }, [fetchFilterData]);
+
+  React.useEffect(() => {
+    if (filterDefault) {
+      const newData = {
+        ...filterDefault,
+        memberships: filterDefault.memberships?.toString().split(','),
+        types: filterDefault.types?.toString().split(','),
+      };
+      reset(newData);
+    } else {
+      reset();
+    }
+  }, [filterDefault, reset]);
 
   return (
     <div
@@ -99,7 +115,7 @@ const UserFilter = (props: Props) => {
                   displayEmpty
                   input={<Input className="field_input_user" />}
                   renderValue={(select) => {
-                    if (select.length === 0) return <p>All memberships</p>;
+                    if (select.length === 0 || !value || select.includes('')) return <p>All memberships</p>;
                     return handleRenderSelectValue(memberships, value, 'label', 'value').join(', ');
                   }}
                   MenuProps={MenuProps}
@@ -141,7 +157,7 @@ const UserFilter = (props: Props) => {
                   multiple
                   input={<Input placeholder="All user types" className="field_input_user" />}
                   renderValue={(select) => {
-                    if (select.length === 0) return <p>All user type</p>;
+                    if (select.length === 0 || select.includes('')) return <p>All user type</p>;
                     return handleRenderSelectValue(role, value, 'name', 'id').join(', ');
                   }}
                   MenuProps={MenuProps}
@@ -238,4 +254,4 @@ const UserFilter = (props: Props) => {
   );
 };
 
-export default UserFilter;
+export default memo(UserFilter);

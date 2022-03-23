@@ -1,6 +1,10 @@
 import { Images } from '../../models/product';
 
-export const checkBoxValue = ['Name', 'SKU', 'Full Description'];
+export const checkBoxValue = [
+  { label: 'Name', value: 'name' },
+  { label: 'SKU', value: 'sku' },
+  { label: 'Full Description', value: 'description' },
+];
 export const optionItemPerPage = [10, 25, 50, 75, 100];
 
 interface TabelHeader {

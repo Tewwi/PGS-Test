@@ -16,6 +16,7 @@ const useStyles = makeStyles(() => ({
     color: '#333',
     padding: '15px',
     border: '1px dotted white',
+    maxHeight: '85px',
   },
   icon: {
     color: '#fff',
@@ -35,6 +36,7 @@ const DropInput = (props: Props) => {
   const [images, setImages] = useState<any[]>([]);
   const [imgId, setImgId] = useState<number[]>([]);
   const [valueUpload, setValueUpload] = useState<any[]>([]);
+  const [imgDefaultLength, setImgDefaultLength] = useState(0);
   const styles = useStyles();
 
   const handlePrevImg = (value: File[]) => {
@@ -48,12 +50,20 @@ const DropInput = (props: Props) => {
   };
 
   const handleRemoveImg = (value: File[], index: number) => {
-    setImages((prev) => prev.filter((_item, i) => i !== index));
-    const newData = value.filter((_item, i) => i !== index);
+    let newData;
+    if (index >= imgDefaultLength) {
+      const valueIndex = index - imgDefaultLength >= 0 ? index - imgDefaultLength : 0;
+      newData = value.filter((_item, i) => +i !== valueIndex);
+    } else {
+      newData = dataDefault ? value : value.filter((_item, i) => i !== index);
+    }
     if (dataDefault && props.handleDeleImg && imgId[index]) {
       props.handleDeleImg(imgId[index]);
+      setImgDefaultLength((prev) => prev - 1);
       setImgId((prev) => prev.filter((item) => item !== imgId[index]));
     }
+    setImages((prev) => prev.filter((_item, i) => i !== index));
+    setValueUpload(newData);
     return newData;
   };
 
@@ -72,6 +82,8 @@ const DropInput = (props: Props) => {
         return temp;
       });
       setImgId(dataDefault.images.map((item) => +item.id));
+      setImgDefaultLength(dataDefault.images.length);
+      setValueUpload([]);
     }
     return;
   }, [dataDefault]);
@@ -85,24 +97,10 @@ const DropInput = (props: Props) => {
         rules={dataDefault ? {} : required('Image')}
         render={({ field: { onChange, onBlur, value } }) => (
           <>
-            <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-              <Dropzone
-                multiple={true}
-                onDrop={(file: File[]) => {
-                  handlePrevImg(file);
-                  onChange(handleValueUpload(file));
-                }}
-              >
-                {({ getRootProps, getInputProps }) => (
-                  <div className={styles.root} {...getRootProps()}>
-                    <CameraAltIcon className={styles.icon} />
-                    <input {...getInputProps()} multiple={true} name={nameInput} onBlur={onBlur} type="file" />
-                  </div>
-                )}
-              </Dropzone>
-              <List style={{ display: 'flex', height: '100%', marginRight: '20px' }}>
+            <div style={{ display: 'flex' }}>
+              <List style={{ display: 'flex', height: '100%', marginRight: '20px', flexWrap: 'wrap' }}>
                 {images.map((f: any, index: number) => (
-                  <ListItem key={index} style={{ height: '70px', width: '70px', padding: '0', marginLeft: '10px' }}>
+                  <ListItem key={index} style={{ height: '70px', width: '70px', padding: '0', margin: '10px' }}>
                     <img src={f} style={{ objectFit: 'cover', height: '100%', width: '100%', padding: '0' }} />
                     <div
                       onClick={() => {
@@ -116,6 +114,20 @@ const DropInput = (props: Props) => {
                     </div>
                   </ListItem>
                 ))}
+                <Dropzone
+                  multiple={true}
+                  onDrop={(file: File[]) => {
+                    handlePrevImg(file);
+                    onChange(handleValueUpload(file));
+                  }}
+                >
+                  {({ getRootProps, getInputProps }) => (
+                    <div className={styles.root} {...getRootProps()}>
+                      <CameraAltIcon className={styles.icon} />
+                      <input {...getInputProps()} multiple={true} name={nameInput} onBlur={onBlur} type="file" />
+                    </div>
+                  )}
+                </Dropzone>
               </List>
             </div>
           </>

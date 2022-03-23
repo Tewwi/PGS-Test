@@ -1,6 +1,5 @@
 import { Button, Typography } from '@mui/material';
 import axios from 'axios';
-import { replace } from 'connected-react-router';
 import dayjs from 'dayjs';
 import { convertFromHTML, convertToHTML } from 'draft-convert';
 import { EditorState } from 'draft-js';
@@ -12,7 +11,6 @@ import { useParams } from 'react-router';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
 import { API_PATHS } from '../../../configs/api';
-import { ROUTES } from '../../../configs/routes';
 import { IShipping, ProductCreateParam } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
 import { getErrorMessageResponse } from '../../../utils';
@@ -25,6 +23,8 @@ import Marketing from '../components/AddProductPage/Marketing';
 import Price from '../components/AddProductPage/Price';
 import Shipping from '../components/AddProductPage/Shipping';
 import { concatImgOrder } from '../utils';
+import { replace } from 'connected-react-router';
+import { ROUTES } from '../../../configs/routes';
 
 const ProductDetail = () => {
   const { id } = useParams() as {
@@ -104,12 +104,8 @@ const ProductDetail = () => {
 
   const onSubmit = useCallback(
     async (data: ProductCreateParam) => {
-      console.log({
-        ...data,
-        description: convertToHTML(data.description.getCurrentContent()),
-        imagesOrder: concatImgOrder(dataDetail?.images, deleItemIndex, data.imgUpload),
-        deleted_images: deleItemIndex,
-      });
+      setLoading(true);
+
       const body = {
         ...data,
         description: convertToHTML(data.description.getCurrentContent()),
@@ -131,7 +127,7 @@ const ProductDetail = () => {
 
       console.log(json);
       if (json) {
-        if (body.imgUpload.length > 0) {
+        if (body?.imgUpload.length > 0) {
           const temp = body.imgUpload.map((item: any, index: number) => {
             const formData = new FormData();
             formData.append('productId', json.data.data);
@@ -144,16 +140,19 @@ const ProductDetail = () => {
 
           console.log(tempResult);
         }
-
+        setLoading(false);
         dispatch(setToastInfo({ open: true, message: 'Update product success', isSuccess: true }));
+        fetchDataDetail();
         dispatch(replace(`${ROUTES.productDetail}/${json.data.data}`));
         return;
       }
 
+      setLoading(false);
+
       dispatch(setToastInfo({ open: true, message: getErrorMessageResponse(json), isSuccess: false }));
       return;
     },
-    [dispatch, deleItemIndex, dataDetail?.images],
+    [dataDetail?.images, deleItemIndex, dispatch, fetchDataDetail],
   );
 
   useEffect(() => {

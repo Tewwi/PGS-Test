@@ -1,7 +1,9 @@
 import { Button, Container, CssBaseline, Typography } from '@mui/material';
-import { replace } from 'connected-react-router';
+import queryString from 'query-string';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
 import { API_PATHS } from '../../../configs/api';
@@ -14,6 +16,7 @@ import ProductPagination from '../components/ProductListPage/ProductPagination';
 import ProductsFilter from '../components/ProductListPage/ProductsFilter';
 import TableProduct from '../components/ProductListPage/TableProduct';
 import TableSkeleton from '../components/ProductListPage/TableSkeleton';
+import { resetProductFilter, setProductFilter } from '../redux/productReducer';
 
 export type Order = 'asc' | 'desc';
 
@@ -24,6 +27,9 @@ interface sortInfo {
 
 const ProductsListPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
+  const history = useHistory();
+  const location = useLocation();
+  const filterDefault = useSelector((state: AppState) => state.product.dataFilter);
   const [tableData, setTableData] = useState<Product[]>();
   const [filterValue, setFilterValue] = useState<ProductFilter>({
     search: '',
@@ -33,16 +39,16 @@ const ProductsListPage = () => {
     vendor: '',
     search_type: [],
   });
+  const [totalItem, setTotalItem] = useState(1000);
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     itemPerPage: 25,
   });
   const [loading, setLoading] = useState(false);
   const [sortInfo, setSortInfo] = useState<sortInfo>({
-    order_by: 'name',
-    sort: 'asc',
+    order_by: filterDefault?.sort ? filterDefault?.sort : 'name',
+    sort: filterDefault?.order_by ? (filterDefault?.order_by as Order) : 'asc',
   });
-  const [totalItem, setTotalItem] = useState(1000);
   const [itemChange, setItemChange] = useState<ProductItem[]>([]);
   const [deleItem, setDeleItem] = useState<object[]>([]);
   const [selectItem, setSelectItem] = useState<Product[]>();
@@ -52,31 +58,62 @@ const ProductsListPage = () => {
     text: 'Save Change',
   });
 
-  const handleFilter = useCallback((data: ProductFilter) => {
-    setFilterValue(data);
-  }, []);
+  const handleFilter = useCallback(
+    (data: ProductFilter) => {
+      const newData = {
+        ...data,
+        page: 1,
+        count: 25,
+        sort: sortInfo.order_by.toLowerCase(),
+        order_by: sortInfo.sort.toUpperCase(),
+      };
+
+      const newQuery = (Object.keys(newData) as Array<keyof typeof newData>).map((item) => {
+        return `${item}=${newData[item] || ''}`;
+      });
+      history.push(`${location.pathname}?${newQuery.join('&')}`);
+      dispatch(setProductFilter(newData));
+      setFilterValue(data);
+    },
+    [dispatch, history, location.pathname, sortInfo],
+  );
 
   const handleSort = (name: string) => {
     const isAsc = sortInfo.order_by === name && sortInfo.sort === 'desc';
+    const newData = {
+      ...filterDefault,
+      order_by: isAsc ? 'ASC' : 'DESC',
+      sort: name.toLowerCase(),
+    };
+    const newQuery = (Object.keys(newData) as Array<keyof typeof newData>).map((item) => {
+      return `${item}=${newData[item] || ''}`;
+    });
+    history.push(`${location.pathname}?${newQuery.join('&')}`);
+    dispatch(setProductFilter(newData as ProductFilter));
     setSortInfo({ sort: isAsc ? 'asc' : 'desc', order_by: name });
   };
 
   const fetchProductData = useCallback(async () => {
     setLoading(true);
+    let resp;
+    if (location.search.length > 1 && filterDefault) {
+      resp = await dispatch(fetchThunk(API_PATHS.getProduct, 'post', filterDefault));
+    } else {
+      if (location.search.length > 1) return;
+      resp = await dispatch(
+        fetchThunk(API_PATHS.getProduct, 'post', {
+          ...filterValue,
+          vendor: filterValue.vendor || '',
+          search_type: filterValue.search_type ? filterValue.search_type?.join(',') : '',
+          page: pageInfo.page,
+          count: pageInfo.itemPerPage,
+          sort: sortInfo.order_by.toLowerCase(),
+          order_by: sortInfo.sort.toUpperCase(),
+        }),
+      );
+    }
 
-    const resp = await dispatch(
-      fetchThunk(API_PATHS.getProduct, 'post', {
-        ...filterValue,
-        vendor: filterValue.vendor || '',
-        search_type: filterValue.search_type?.toString(),
-        page: pageInfo.page,
-        count: pageInfo.itemPerPage,
-        sort: sortInfo.order_by.toLowerCase(),
-        order_by: sortInfo.sort.toUpperCase(),
-      }),
-    );
     setLoading(false);
-
     if (resp.data) {
       setTableData(
         resp.data.map((item: Product) => {
@@ -88,22 +125,43 @@ const ProductsListPage = () => {
     }
 
     setTableData([]);
+    setTotalItem(0);
     console.log('error');
     return;
-  }, [dispatch, pageInfo.itemPerPage, pageInfo.page, filterValue, sortInfo]);
+  }, [location.search, dispatch, filterValue, pageInfo, sortInfo, filterDefault]);
 
   const handleChangePage = useCallback(
     (e: React.ChangeEvent<unknown>, num: number) => {
+      const newData = {
+        ...filterDefault,
+        page: num,
+        count: pageInfo.itemPerPage,
+      };
+      const newQuery = (Object.keys(newData) as Array<keyof typeof newData>).map((item) => {
+        return `${item}=${newData[item] || ''}`;
+      });
+      history.push(`${location.pathname}?${newQuery.join('&')}`);
+      dispatch(setProductFilter(newData as ProductFilter));
       setPageInfo({ ...pageInfo, page: num });
     },
-    [pageInfo],
+    [dispatch, filterDefault, history, location.pathname, pageInfo],
   );
 
   const handleChangItemPerPage = useCallback(
     (num: number) => {
+      const newData = {
+        ...filterDefault,
+        count: num,
+        page: 1,
+      };
+      const newQuery = (Object.keys(newData) as Array<keyof typeof newData>).map((item) => {
+        return `${item}=${newData[item] || ''}`;
+      });
+      history.push(`${location.pathname}?${newQuery.join('&')}`);
+      dispatch(setProductFilter(newData as ProductFilter));
       setPageInfo({ ...pageInfo, itemPerPage: num, page: 1 });
     },
-    [pageInfo],
+    [dispatch, filterDefault, history, location.pathname, pageInfo],
   );
 
   const handleCheckAll = useCallback((check: boolean) => {
@@ -147,27 +205,19 @@ const ProductsListPage = () => {
       );
       setLoading(false);
       if (resp.success) {
-        console.log(resp);
-        setTableData((prev) => {
-          if (prev) {
-            const index = prev?.findIndex((item) => item.id == id);
-            const newData = [...prev];
-            newData[index] = { ...newData[index], enabled: isEnabled.toString() };
-            return newData;
-          }
-        });
+        fetchProductData();
       }
 
       return;
     },
-    [dispatch],
+    [dispatch, fetchProductData],
   );
 
   const handleChangeValueItem = useCallback(
     (data: ProductItem, index: number) => {
       if (tableData) {
         const newData = [...tableData];
-        const cloneItem = { ...newData[index], price: data.price, amount: data.amount };
+        const cloneItem = { ...newData[index], price: data.price, amount: data.stock };
         if (JSON.stringify(newData[index]) === JSON.stringify(cloneItem)) return;
         newData[index] = cloneItem;
         setItemChange((prev) => [...prev, data]);
@@ -188,6 +238,9 @@ const ProductsListPage = () => {
     );
     setLoading(false);
     console.log(resp);
+    setBtnInfo((prev) => {
+      return { ...prev, disable: true };
+    });
     return;
   }, [dispatch, itemChange]);
 
@@ -242,6 +295,31 @@ const ProductsListPage = () => {
     }
   }, [itemChange, deleItem]);
 
+  useEffect(() => {
+    if (location.search.length > 1) {
+      const query = queryString.parse(location.search);
+      const newData = {
+        ...query,
+        page: query.page ? +query.page : 2,
+        count: query.count ? +query.count : 25,
+      };
+      setPageInfo({ page: query.page ? +query.page : 1, itemPerPage: query.count ? +query.count : 25 });
+      dispatch(setProductFilter(newData as ProductFilter));
+    }
+  }, [location.search, dispatch]);
+
+  useEffect(() => {
+    const unlisten = history.listen((location) => {
+      if (location.search == '') {
+        dispatch(resetProductFilter());
+      }
+    });
+
+    return () => {
+      unlisten();
+    };
+  }, [dispatch, history]);
+
   return (
     <>
       <CssBaseline />
@@ -263,11 +341,10 @@ const ProductsListPage = () => {
                   },
                   textTransform: 'none',
                 }}
-                onClick={() => {
-                  dispatch(replace(ROUTES.addProduct));
-                }}
               >
-                Add Product
+                <Link style={{ textDecoration: 'none', color: 'inherit' }} to={ROUTES.addProduct}>
+                  Add Product
+                </Link>
               </Button>
             </div>
             {tableData && !loading ? (
@@ -290,6 +367,7 @@ const ProductsListPage = () => {
               totalItem={totalItem}
               handleChangePage={handleChangePage}
               handleChangItemPerPage={handleChangItemPerPage}
+              valueDefault={filterDefault}
             />
           </Container>
         </div>

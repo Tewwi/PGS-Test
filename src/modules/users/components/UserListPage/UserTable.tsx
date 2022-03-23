@@ -1,5 +1,5 @@
 import { Table, TableBody, TableContainer } from '@mui/material';
-import React from 'react';
+import React, { memo } from 'react';
 import { UserTableInfo } from '../../../../models/userList';
 import UserListItem from './UserListItem';
 import TableHeader from './UserTableHeader';
@@ -36,4 +36,4 @@ const UserTable = (props: Props) => {
   );
 };
 
-export default UserTable;
+export default memo(UserTable);

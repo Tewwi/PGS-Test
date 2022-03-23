@@ -1,20 +1,23 @@
 import { Button, Container, CssBaseline, Typography } from '@mui/material';
+import dayjs from 'dayjs';
+import queryString from 'query-string';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
-import { AppState } from '../../../redux/reducer';
-import { UserTableInfo, FilterParam } from '../../../models/userList';
-import UserFilter from '../components/UserListPage/UserFilter';
-import { fetchThunk } from '../../common/redux/thunk';
 import { API_PATHS } from '../../../configs/api';
-import UserTable from '../components/UserListPage/UserTable';
-import TableSkeleton from '../../products/components/ProductListPage/TableSkeleton';
-import ProductPagination from '../../products/components/ProductListPage/ProductPagination';
 import { ROUTES } from '../../../configs/routes';
-import { replace } from 'connected-react-router';
-import dayjs from 'dayjs';
+import { FilterParam, UserTableInfo } from '../../../models/userList';
+import { AppState } from '../../../redux/reducer';
+import { fetchThunk } from '../../common/redux/thunk';
+import ProductPagination from '../../products/components/ProductListPage/ProductPagination';
+import TableSkeleton from '../../products/components/ProductListPage/TableSkeleton';
+import UserFilter from '../components/UserListPage/UserFilter';
 import UserListPageFooter from '../components/UserListPage/UserListPageFooter';
+import UserTable from '../components/UserListPage/UserTable';
+import { resetUserFilter, setUserFilter } from '../redux/userReducer';
 
 interface sortInfo {
   sort: string;
@@ -23,6 +26,9 @@ interface sortInfo {
 
 const UserListPage = () => {
   const dispatch = useDispatch<ThunkDispatch<AppState, null, Action<string>>>();
+  const filterDefault = useSelector((state: AppState) => state.userList.dataFilter);
+  const history = useHistory();
+  const location = useLocation();
   const [usersData, setUsersData] = useState<UserTableInfo[]>();
   const [loading, setLoading] = useState(false);
   const [filterParams, setFilterParams] = useState<FilterParam>();
@@ -41,25 +47,40 @@ const UserListPage = () => {
   const fetchUsersData = useCallback(async () => {
     setLoading(true);
 
-    const temp = filterParams?.date_range?.map((item) => dayjs(item).format('YYYY-MM-DD'));
+    const temp = filterParams?.date_range
+      ? filterParams?.date_range?.map((item) => dayjs(item).format('YYYY-MM-DD'))
+      : [];
     const newData = {
       ...filterParams,
       status: filterParams?.status ? [filterParams?.status] : [],
       date_range: temp ? temp : [],
     };
+    let resp;
 
-    const resp = await dispatch(
-      fetchThunk(API_PATHS.getUserList, 'post', {
-        ...pageInfo,
-        ...newData,
-        sort: sortInfo.sort == 'Name' ? 'fistName' : 'vendor',
-        order_by: sortInfo.order_by.toUpperCase(),
-      }),
-    );
+    if (location.search.length > 1 && filterDefault) {
+      resp = await dispatch(
+        fetchThunk(API_PATHS.getUserList, 'post', {
+          ...filterDefault,
+          status: filterDefault?.status ? [filterDefault?.status] : [],
+          date_range: temp ? temp : [],
+          memberships: filterDefault.memberships?.toString().split(','),
+          types: filterDefault.types?.toString().split(','),
+        }),
+      );
+    } else {
+      if (location.search.length > 1) return;
+      resp = await dispatch(
+        fetchThunk(API_PATHS.getUserList, 'post', {
+          ...pageInfo,
+          ...newData,
+          sort: sortInfo.sort == 'Name' ? 'fistName' : 'vendor',
+          order_by: sortInfo.order_by.toUpperCase(),
+        }),
+      );
+    }
 
     setLoading(false);
 
-    console.log(resp);
     if (resp.success) {
       setTotalItem(+resp.recordsFiltered);
       setUsersData(
@@ -72,30 +93,77 @@ const UserListPage = () => {
 
     console.log('error');
     return;
-  }, [dispatch, pageInfo, filterParams, sortInfo]);
+  }, [location, filterParams, filterDefault, dispatch, pageInfo, sortInfo]);
 
-  const handleFilter = useCallback((data: FilterParam) => {
-    const newData = { ...data, country: data.country ?? '', state: data.state ?? '' };
-    setFilterParams(newData);
-  }, []);
+  const handleFilter = useCallback(
+    (data: FilterParam) => {
+      const newData = {
+        ...data,
+        country: data.country ?? '',
+        state: data.state ?? '',
+        page: 1,
+        count: 25,
+        sort: sortInfo.sort == 'Name' ? 'fistName' : 'vendor',
+        order_by: sortInfo.order_by.toUpperCase(),
+      };
+      const newQuery = (Object.keys(newData) as Array<keyof typeof newData>).map((item) => {
+        return `${item}=${newData[item] || ''}`;
+      });
+      history.push(`${location.pathname}?${newQuery.join('&')}`);
+      dispatch(setUserFilter(newData));
 
-  const handleSort = (name: string) => {
-    const isAsc = sortInfo.sort === name && sortInfo.order_by === 'desc';
-    setSortInfo({ order_by: isAsc ? 'asc' : 'desc', sort: name });
-  };
+      setFilterParams(newData);
+    },
+    [dispatch, history, location.pathname, sortInfo],
+  );
+
+  const handleSort = useCallback(
+    (name: string) => {
+      const isAsc = sortInfo.sort === name && sortInfo.order_by === 'desc';
+      const newData = { ...filterDefault, order_by: isAsc ? 'asc' : 'desc', sort: name };
+
+      const newQuery = (Object.keys(newData) as Array<keyof typeof newData>).map((item) => {
+        return `${item}=${newData[item]}`;
+      });
+      history.push(`${location.pathname}?${newQuery.join('&')}`);
+      dispatch(setUserFilter(newData as FilterParam));
+      setSortInfo({ order_by: isAsc ? 'asc' : 'desc', sort: name });
+    },
+    [dispatch, filterDefault, history, location.pathname, sortInfo.order_by, sortInfo.sort],
+  );
 
   const handleChangePage = useCallback(
     (e: React.ChangeEvent<unknown>, num: number) => {
+      const newData = {
+        ...filterDefault,
+        page: num,
+        count: pageInfo.count,
+      };
+      const newQuery = (Object.keys(newData) as Array<keyof typeof newData>).map((item) => {
+        return `${item}=${newData[item] || ''}`;
+      });
+      history.push(`${location.pathname}?${newQuery.join('&')}`);
+      dispatch(setUserFilter(newData as FilterParam));
       setPageInfo({ ...pageInfo, page: num });
     },
-    [pageInfo],
+    [dispatch, filterDefault, history, location.pathname, pageInfo],
   );
 
   const handleChangItemPerPage = useCallback(
     (num: number) => {
-      setPageInfo({ ...pageInfo, count: num });
+      const newData = {
+        ...filterDefault,
+        count: num,
+        page: 1,
+      };
+      const newQuery = (Object.keys(newData) as Array<keyof typeof newData>).map((item) => {
+        return `${item}=${newData[item] || ''}`;
+      });
+      history.push(`${location.pathname}?${newQuery.join('&')}`);
+      dispatch(setUserFilter(newData as FilterParam));
+      setPageInfo({ ...pageInfo, count: num, page: 1 });
     },
-    [pageInfo],
+    [dispatch, filterDefault, history, location.pathname, pageInfo],
   );
 
   const handleCheckAll = useCallback((check: boolean) => {
@@ -156,7 +224,31 @@ const UserListPage = () => {
 
   useEffect(() => {
     fetchUsersData();
-  }, [fetchUsersData]);
+  }, [fetchUsersData, filterDefault]);
+
+  useEffect(() => {
+    if (location.search.length > 1) {
+      const query = queryString.parse(location.search);
+      const newData = {
+        ...query,
+        page: query.page ? +query.page : 1,
+        count: query.count ? +query.count : 25,
+      };
+      setPageInfo({ page: query.page ? +query.page : 1, count: query.count ? +query.count : 25 });
+      dispatch(setUserFilter(newData as FilterParam));
+    }
+  }, [location, dispatch]);
+
+  useEffect(() => {
+    const unlisten = history.listen((location) => {
+      if (location.search == '') {
+        dispatch(resetUserFilter());
+      }
+    });
+    return () => {
+      unlisten();
+    };
+  }, [dispatch, history]);
 
   return (
     <>
@@ -179,11 +271,10 @@ const UserListPage = () => {
                   },
                   textTransform: 'none',
                 }}
-                onClick={() => {
-                  dispatch(replace(ROUTES.createUser));
-                }}
               >
-                Add User
+                <Link style={{ textDecoration: 'none', color: 'inherit' }} to={ROUTES.createUser}>
+                  Add User
+                </Link>
               </Button>
             </div>
             {usersData && !loading ? (
@@ -197,14 +288,15 @@ const UserListPage = () => {
             ) : (
               <TableSkeleton />
             )}
+            <ProductPagination
+              currPage={pageInfo.page}
+              itemPerPage={pageInfo.count}
+              totalItem={totalItem}
+              handleChangePage={handleChangePage}
+              handleChangItemPerPage={handleChangItemPerPage}
+              valueDefault={filterDefault}
+            />
           </Container>
-          <ProductPagination
-            currPage={pageInfo.page}
-            itemPerPage={pageInfo.count}
-            totalItem={totalItem}
-            handleChangePage={handleChangePage}
-            handleChangItemPerPage={handleChangItemPerPage}
-          />
           <UserListPageFooter btnDisable={isBtnDisable} handleRemovebtn={handleRemoveItem} />
         </div>
       </div>

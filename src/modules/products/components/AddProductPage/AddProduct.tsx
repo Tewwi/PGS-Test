@@ -251,8 +251,11 @@ const AddProduct = (props: Props) => {
                     editorClassName="editorClassName"
                     onEditorStateChange={onChange}
                     editorStyle={{
-                      backgroundColor: 'white',
+                      backgroundColor: 'rgb(27, 27, 56)',
                       minHeight: '100px',
+                      color: 'white',
+                      border: '1px solid white',
+                      padding: '5px',
                     }}
                   />
                 </div>

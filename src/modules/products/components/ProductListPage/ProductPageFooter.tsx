@@ -94,7 +94,7 @@ const ProductPageFooter = (props: Props) => {
           textTransform: 'none',
         }}
       >
-        {dataExport.length > 0 ? (
+        {dataExport.length >= 0 ? (
           <CSVLink
             style={{ textDecoration: 'none', color: 'white' }}
             data={dataExport as Data}
