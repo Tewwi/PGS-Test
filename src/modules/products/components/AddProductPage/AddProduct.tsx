@@ -1,12 +1,12 @@
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
-import { Autocomplete, Input, MenuItem, Select, Switch, Typography } from '@mui/material';
+import { Autocomplete, Chip, Switch, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Control, Controller } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { fieldData, ProductCreateParam } from '../../../../models/product';
-import { MenuProps, required } from '../../utils';
+import { required } from '../../utils';
 import DropInput from './DropInput';
 
 export interface AddPageComProps {
@@ -60,7 +60,7 @@ const AddProduct = (props: Props) => {
                 <Autocomplete
                   {...props}
                   value={value || null}
-                  isOptionEqualToValue={(option, value) => +option?.id == +value.id}
+                  isOptionEqualToValue={(option, value) => +option?.id === +value.id}
                   options={data?.vendor || []}
                   getOptionLabel={(item) => (item ? item.name : '')}
                   onChange={(event, item) => {
@@ -201,30 +201,37 @@ const AddProduct = (props: Props) => {
             rules={required('Catagory')}
             name="categories"
             defaultValue={[]}
-            render={({ field: { value, ...props } }) => (
-              <Select
+            render={({ field: { value, onChange, ...props } }) => (
+              <Autocomplete
                 {...props}
+                value={value}
+                onChange={(e, item) => onChange(item)}
                 multiple
-                value={value ?? ''}
-                input={
-                  <Input
-                    className="field_input"
-                    style={{
-                      maxHeight: '42px',
-                      outline: 'none',
-                    }}
-                  />
-                }
-                MenuProps={MenuProps}
-              >
-                {data?.catagory?.map((item) => (
-                  <MenuItem key={item.id} value={+item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </Select>
+                options={data?.catagory || []}
+                isOptionEqualToValue={(option, value) => +option?.id === +value.id}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField {...params} variant="filled" hiddenLabel fullWidth sx={{ color: 'white' }} />
+                )}
+                renderTags={(selected, getTagProps) => {
+                  return selected.map((item, index) => {
+                    const { key, ...rest } = getTagProps({ index });
+                    return (
+                      <Chip
+                        variant="outlined"
+                        label={item.name}
+                        style={{ color: 'white' }}
+                        color="default"
+                        key={key}
+                        {...rest}
+                      />
+                    );
+                  });
+                }}
+              />
             )}
           />
+
           <Typography className="error_message">{error?.categories ? error?.categories?.message : ''}</Typography>
         </div>
       </div>
@@ -232,6 +239,7 @@ const AddProduct = (props: Props) => {
         <Typography
           sx={{ fontSize: '16px', color: 'white', marginRight: '15px', alignSelf: 'center', width: '15%' }}
           noWrap
+          style={{ alignSelf: 'flex-start' }}
         >
           Description<span style={{ color: 'red' }}> *</span>
         </Typography>

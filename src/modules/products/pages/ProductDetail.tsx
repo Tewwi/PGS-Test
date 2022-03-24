@@ -1,5 +1,6 @@
 import { Button, Typography } from '@mui/material';
 import axios from 'axios';
+import { replace } from 'connected-react-router';
 import dayjs from 'dayjs';
 import { convertFromHTML, convertToHTML } from 'draft-convert';
 import { EditorState } from 'draft-js';
@@ -11,6 +12,7 @@ import { useParams } from 'react-router';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'typesafe-actions';
 import { API_PATHS } from '../../../configs/api';
+import { ROUTES } from '../../../configs/routes';
 import { IShipping, ProductCreateParam } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
 import { getErrorMessageResponse } from '../../../utils';
@@ -23,8 +25,6 @@ import Marketing from '../components/AddProductPage/Marketing';
 import Price from '../components/AddProductPage/Price';
 import Shipping from '../components/AddProductPage/Shipping';
 import { concatImgOrder } from '../utils';
-import { replace } from 'connected-react-router';
-import { ROUTES } from '../../../configs/routes';
 
 const ProductDetail = () => {
   const { id } = useParams() as {
@@ -53,6 +53,8 @@ const ProductDetail = () => {
 
     setLoading(false);
 
+    console.log(resp);
+
     if (resp && resp.success && dataField) {
       const contentState = EditorState.createEmpty();
       const description = EditorState.push(
@@ -64,6 +66,11 @@ const ProductDetail = () => {
         return item.id == resp.data.vendor_id;
       })[0];
 
+      const categories = dataField.catagory?.filter((item) => {
+        const respFilter: any = resp.data.categories.map((mapItem: any) => +mapItem.category_id === +item.id);
+        return respFilter.includes(true);
+      });
+
       const time = dayjs(resp.data.arrival_date * 1000).format('YYYY-MM-DD');
       const newData = {
         ...resp.data,
@@ -71,7 +78,7 @@ const ProductDetail = () => {
         vendor_id: vendor,
         arrival_date: time,
         shipping_to_zones: resp.data.shipping,
-        categories: resp.data.categories.map((item: any) => item.category_id),
+        categories: categories,
       };
       setDataDetail(newData);
       reset(newData);
@@ -112,6 +119,7 @@ const ProductDetail = () => {
         vendor_id: data.vendor_id.id,
         imagesOrder: concatImgOrder(dataDetail?.images, deleItemIndex, data.imgUpload),
         deleted_images: deleItemIndex,
+        categories: data.categories.map((item) => item.id),
       };
       const config = {
         headers: {

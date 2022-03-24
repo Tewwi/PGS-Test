@@ -85,7 +85,7 @@ export interface ProductCreateParam {
   condition_id: string | null;
   sku?: string;
   imagesOrder: string[];
-  categories: number[];
+  categories: Catagory[];
   description: any;
   enabled?: number;
   memberships?: number[] | null;

@@ -220,7 +220,15 @@ const ProductsListPage = () => {
         const cloneItem = { ...newData[index], price: data.price, amount: data.stock };
         if (JSON.stringify(newData[index]) === JSON.stringify(cloneItem)) return;
         newData[index] = cloneItem;
-        setItemChange((prev) => [...prev, data]);
+        setItemChange((prev) => {
+          const pos = prev.map((item) => +item.id).indexOf(+newData[index].id);
+          if (pos > -1) {
+            const newData = [...prev];
+            newData[index] = data;
+            return newData;
+          }
+          return [...prev, data];
+        });
         setTableData(newData);
         return;
       }
@@ -237,6 +245,7 @@ const ProductsListPage = () => {
       }),
     );
     setLoading(false);
+    setItemChange([]);
     console.log(resp);
     setBtnInfo((prev) => {
       return { ...prev, disable: true };

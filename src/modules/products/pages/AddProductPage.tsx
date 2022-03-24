@@ -62,13 +62,16 @@ const AddProductPage = () => {
 
   const onSubmit = async (data: ProductCreateParam) => {
     setLoading(true);
-    console.log(data);
     const body = {
       ...data,
       description: convertToHTML(data.description.getCurrentContent()),
       vendor_id: data.vendor_id.id,
       imagesOrder: data?.imgUpload?.map((item: any) => item[0].name),
+      categories: data.categories.map((item) => item.id),
     };
+
+    console.log(body);
+
     const config = {
       headers: {
         'content-type': 'multipart/form-data',
