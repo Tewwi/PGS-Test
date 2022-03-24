@@ -11,6 +11,7 @@ import { ROUTES } from '../../../configs/routes';
 import { Product, ProductFilter, ProductItem } from '../../../models/product';
 import { AppState } from '../../../redux/reducer';
 import { fetchThunk } from '../../common/redux/thunk';
+import { setToastInfo } from '../../layout/redux/layoutReducer';
 import ProductPageFooter from '../components/ProductListPage/ProductPageFooter';
 import ProductPagination from '../components/ProductListPage/ProductPagination';
 import ProductsFilter from '../components/ProductListPage/ProductsFilter';
@@ -250,6 +251,7 @@ const ProductsListPage = () => {
     setBtnInfo((prev) => {
       return { ...prev, disable: true };
     });
+    dispatch(setToastInfo({ open: true, message: 'Update success', isSuccess: true }));
     return;
   }, [dispatch, itemChange]);
 
@@ -265,6 +267,7 @@ const ProductsListPage = () => {
     });
     fetchProductData();
     console.log(resp);
+    dispatch(setToastInfo({ open: true, message: 'Delete success', isSuccess: false }));
     return;
   }, [dispatch, deleItem, fetchProductData]);
 

@@ -33,6 +33,7 @@ const ProductsFilter = (props: Props) => {
   const location = useLocation();
 
   const onSubmit = (data: any) => {
+    console.log(data);
     props.handleFilter(data);
     return;
   };
@@ -44,7 +45,7 @@ const ProductsFilter = (props: Props) => {
   ) => {
     const values = typeof field.value === 'string' ? field.value.split(',') : field.value;
     if (checked) {
-      field.onChange([...values, e.target.value]);
+      field.onChange([...values, e.target.value].filter((item) => item !== ''));
     } else {
       field.onChange(values.filter((value: any) => value !== e.target.value));
     }
