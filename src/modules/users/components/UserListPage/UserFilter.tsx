@@ -55,7 +55,6 @@ const UserFilter = (props: Props) => {
 
         return temp.map((item: any) => item[`${fieldName}`]);
       });
-
       return result.filter((item) => item.length > 0);
     }
     return ['All'];
@@ -115,7 +114,7 @@ const UserFilter = (props: Props) => {
                   displayEmpty
                   input={<Input className="field_input_user" />}
                   renderValue={(select) => {
-                    if (select.length === 0 || !value || select.includes('')) return <p>All memberships</p>;
+                    if (select.length <= 1 || !value) return <p>All memberships</p>;
                     return handleRenderSelectValue(memberships, value, 'label', 'value').join(', ');
                   }}
                   MenuProps={MenuProps}
@@ -157,7 +156,11 @@ const UserFilter = (props: Props) => {
                   multiple
                   input={<Input placeholder="All user types" className="field_input_user" />}
                   renderValue={(select) => {
-                    if (select.length === 0 || select.includes('')) return <p>All user type</p>;
+                    console.log(select);
+                    if (select.length <= 1) {
+                      console.log('aa');
+                      return <p>All user type</p>;
+                    }
                     return handleRenderSelectValue(role, value, 'name', 'id').join(', ');
                   }}
                   MenuProps={MenuProps}
