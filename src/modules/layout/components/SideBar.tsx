@@ -3,8 +3,8 @@ import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import { Collapse, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { ROUTES } from '../../../configs/routes';
+import SidebarListItem from './SidebarListItem';
 
 interface Props {
   sideBarOpen: boolean;
@@ -13,8 +13,29 @@ interface Props {
 
 const SideBar = (props: Props) => {
   const drawerWidth = props.sideBarOpen ? 200 : 0;
-  const [userOpen, setUserOpen] = React.useState(false);
-  const [catalogOpen, setCatalogOpen] = React.useState(false);
+  const [userInfo, setUserInfo] = React.useState({
+    open: false,
+    select: false,
+  });
+  const [catalogInfo, setCatalogInfo] = React.useState({
+    open: false,
+    select: false,
+  });
+
+  const handleSelect = React.useCallback((select: boolean, tag: string) => {
+    if (tag == 'Catalog') {
+      setCatalogInfo((prev) => {
+        return { ...prev, select: select };
+      });
+      setUserInfo({ open: false, select: !select });
+    } else {
+      setUserInfo((prev) => {
+        return { ...prev, select: select };
+      });
+      setCatalogInfo({ open: false, select: !select });
+    }
+  }, []);
+
   return (
     <Drawer
       open={props.sideBarOpen}
@@ -37,37 +58,37 @@ const SideBar = (props: Props) => {
       }}
     >
       <List>
-        <ListItemButton onClick={() => setCatalogOpen(!catalogOpen)}>
+        <ListItemButton
+          onClick={() =>
+            setCatalogInfo((prev) => {
+              return { ...prev, open: !prev.open };
+            })
+          }
+        >
           <ListItemIcon>
-            <LocalOfferOutlinedIcon sx={{ color: 'white' }} />
+            <LocalOfferOutlinedIcon sx={{ color: catalogInfo.select ? '#b18aff' : 'white' }} />
           </ListItemIcon>
-          <ListItemText primary="Catalog" />
-          {catalogOpen ? <ExpandLess /> : <ExpandMore />}
+          <ListItemText primary="Catalog" sx={{ color: catalogInfo.select ? '#b18aff' : 'white' }} />
+          {catalogInfo.open ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-        <Collapse in={catalogOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <Link to={ROUTES.productList} style={{ textDecoration: 'none', color: 'white' }}>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemText primary="Products" />
-              </ListItemButton>
-            </Link>
-          </List>
+        <Collapse in={catalogInfo.open} timeout="auto" unmountOnExit>
+          <SidebarListItem tag="Catalog" handleSelect={handleSelect} label="Products" to={ROUTES.productList} />
         </Collapse>
-        <ListItemButton onClick={() => setUserOpen(!userOpen)}>
+        <ListItemButton
+          onClick={() =>
+            setUserInfo((prev) => {
+              return { ...prev, open: !prev.open };
+            })
+          }
+        >
           <ListItemIcon>
-            <GroupOutlinedIcon sx={{ color: 'white' }} />
+            <GroupOutlinedIcon sx={{ color: userInfo.select ? '#b18aff' : 'white' }} />
           </ListItemIcon>
-          <ListItemText sx={{ fontSize: '13px' }} primary="User" />
-          {userOpen ? <ExpandLess /> : <ExpandMore />}
+          <ListItemText sx={{ fontSize: '13px', color: userInfo.select ? '#b18aff' : 'white' }} primary="User" />
+          {userInfo.open ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-        <Collapse in={userOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <Link to={ROUTES.userList} style={{ textDecoration: 'none', color: 'white' }}>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemText sx={{ fontSize: '13px' }} primary="User List" />
-              </ListItemButton>
-            </Link>
-          </List>
+        <Collapse in={userInfo.open} timeout="auto" unmountOnExit>
+          <SidebarListItem tag="User" handleSelect={handleSelect} label="User List" to={ROUTES.userList} />
         </Collapse>
       </List>
     </Drawer>
