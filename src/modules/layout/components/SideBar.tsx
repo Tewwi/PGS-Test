@@ -19,7 +19,7 @@ const SideBar = (props: Props) => {
   });
   const [catalogInfo, setCatalogInfo] = React.useState({
     open: false,
-    select: false,
+    select: true,
   });
 
   const handleSelect = React.useCallback((select: boolean, tag: string) => {

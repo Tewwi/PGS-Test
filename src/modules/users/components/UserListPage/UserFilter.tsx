@@ -74,6 +74,7 @@ const UserFilter = (props: Props) => {
         ...filterDefault,
         memberships: filterDefault.memberships?.toString().split(','),
         types: filterDefault.types?.toString().split(','),
+        date_range: [],
       };
       reset(newData);
     } else {
